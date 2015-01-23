@@ -3,8 +3,9 @@
 
 ## set up environment ##
 
-import os, pprint, sys, unittest
+import os, sys
 sys.path.append( os.environ[u'AN_PR_PA__ENCLOSING_PROJECT_PATH'] )
+import pprint, unittest
 from annex_process_pageslips import utility_code
 
 

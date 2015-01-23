@@ -1,37 +1,30 @@
+# -*- coding: utf-8 -*-
+
+
 ## set up environment ##
 
-# get the project's enclosing directory
-import datetime
-import os
-import shutil
-import sys
+import os, sys
+sys.path.append( os.environ[u'AN_PR_PA__ENCLOSING_PROJECT_PATH'] )
+import datetime, shutil, string
+from annex_process_pageslips import utility_code
 
-current_script_name = sys.argv[0]   # might be a full path, depending how script was called, but might only be: eg './sample_script.py'
-project_directory_path = os.path.dirname( current_script_name )   # eg '.'
-full_project_directory_path = os.path.abspath( project_directory_path )   # eg '/path/to/sample_project'
-directory_list = full_project_directory_path.split('/')   # eg ['', 'path', 'to', 'sample_project']
-project_directory_name = directory_list[-1]   # eg 'sample_project'
-directory_enclosing_project_directory_path = full_project_directory_path.replace( '/' + project_directory_name, '' )  # eg '/path/to'
-
-sys.path.append( directory_enclosing_project_directory_path )
-sys.path.append( '%s/opac_to_las_python_parser_code/lib' % directory_enclosing_project_directory_path )   # necessary for an internal simplejson reference
-
-# ok, now rest of necessary imports
-import string
-from opac_to_las_python_parser_code import settings
-from opac_to_las_python_parser_code import utility_code
-
+PATH_TO_ARCHIVES_ORIGINALS_DIRECTORY = os.environ[u'AN_PR_PA__PATH_TO_ARCHIVES_ORIGINALS_DIRECTORY']
+PATH_TO_ARCHIVES_PARSED_DIRECTORY = os.environ[u'AN_PR_PA__PATH_TO_ARCHIVES_PARSED_DIRECTORY']
+PATH_TO_PARSED_ANNEX_COUNT_DIRECTORY = os.environ[u'AN_PR_PA__PATH_TO_PARSED_ANNEX_COUNT_DIRECTORY']
+PATH_TO_PARSED_ANNEX_DATA_DIRECTORY = os.environ[u'AN_PR_PA__PATH_TO_PARSED_ANNEX_DATA_DIRECTORY']
+PATH_TO_SOURCE_FILE = os.environ[u'AN_PR_PA__PATH_TO_SOURCE_FILE']
+PATH_TO_SOURCE_FILE_DIRECTORY = os.environ[u'AN_PR_PA__PATH_TO_SOURCE_FILE_DIRECTORY']
 
 
 ## check that all paths are legit
 
 utility_code.updateLog( message='START', message_importance='high' )
 
-check_a = utility_code.checkDirectoryExistence( settings.PATH_TO_SOURCE_FILE_DIRECTORY )
-check_b = utility_code.checkDirectoryExistence( settings.PATH_TO_ARCHIVES_ORIGINALS_DIRECTORY )
-check_c = utility_code.checkDirectoryExistence( settings.PATH_TO_ARCHIVES_PARSED_DIRECTORY )
-check_d = utility_code.checkDirectoryExistence( settings.PATH_TO_PARSED_ANNEX_DATA_DIRECTORY )
-check_e = utility_code.checkDirectoryExistence( settings.PATH_TO_PARSED_ANNEX_COUNT_DIRECTORY )
+check_a = utility_code.checkDirectoryExistence( PATH_TO_SOURCE_FILE_DIRECTORY )
+check_b = utility_code.checkDirectoryExistence( PATH_TO_ARCHIVES_ORIGINALS_DIRECTORY )
+check_c = utility_code.checkDirectoryExistence( PATH_TO_ARCHIVES_PARSED_DIRECTORY )
+check_d = utility_code.checkDirectoryExistence( PATH_TO_PARSED_ANNEX_DATA_DIRECTORY )
+check_e = utility_code.checkDirectoryExistence( PATH_TO_PARSED_ANNEX_COUNT_DIRECTORY )
 if check_a == 'exists' and check_b == 'exists' and check_c == 'exists' and check_d == 'exists' and check_e == 'exists':
   utility_code.updateLog( message='- path check passed' )
 else:
@@ -44,7 +37,7 @@ else:
 ## check for file
 
 try:
-  file_reference = open( settings.PATH_TO_SOURCE_FILE )
+  file_reference = open( PATH_TO_SOURCE_FILE )
   # data_as_string = file_reference.read()
   # print 'data_as_string is: %s' % data_as_string
   # lines = data_as_string.split( '\n' )
