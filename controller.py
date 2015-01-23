@@ -59,20 +59,20 @@ utility_code.updateLog( message='- date_stamp is: %s' % date_stamp )
 
 ## copy original to archives
 
-original_archive_file_path = '%s/REQ-ORIG_%s.dat' % ( settings.PATH_TO_ARCHIVES_ORIGINALS_DIRECTORY, date_stamp )   # i.e. '/path/REQ-ORIG_2005-05-19T15/08/09.dat'
+original_archive_file_path = '%s/REQ-ORIG_%s.dat' % ( PATH_TO_ARCHIVES_ORIGINALS_DIRECTORY, date_stamp )   # i.e. '/path/REQ-ORIG_2005-05-19T15/08/09.dat'
 try:
-  shutil.copyfile( settings.PATH_TO_SOURCE_FILE, original_archive_file_path )
+  shutil.copyfile( PATH_TO_SOURCE_FILE, original_archive_file_path )
   os.chmod( original_archive_file_path, 0640 )
   utility_code.updateLog( message='- source file copied to original archives' )
 except Exception, e:
-  message = '- copy of original file from "%s" to "%s" unsuccessful; exception is: %s' % ( settings.PATH_TO_SOURCE_FILE, original_archive_file_path, e )
+  message = '- copy of original file from "%s" to "%s" unsuccessful; exception is: %s' % ( PATH_TO_SOURCE_FILE, original_archive_file_path, e )
   utility_code.updateLog( message=message, message_importance='high' )
   sys.exist( message )
 copy_check = utility_code.checkFileExistence( original_archive_file_path )
 if copy_check == 'exists':
   utility_code.updateLog( message='- original file copied to: %s' % original_archive_file_path )
 else:
-  message = '- copy of original file from "%s" to "%s" unsuccessful; exception is: %s' % ( settings.PATH_TO_SOURCE_FILE, original_archive_file_path, copy_check )
+  message = '- copy of original file from "%s" to "%s" unsuccessful; exception is: %s' % ( PATH_TO_SOURCE_FILE, original_archive_file_path, copy_check )
   utility_code.updateLog( message=message, message_importance='high' )
   sys.exist( message )
 
@@ -180,7 +180,7 @@ if not post_result == 'success':
 
 try:
   parsed_file_name = 'REQ-PARSED_%s.dat' % date_stamp
-  parsed_file_archive_path = '%s/%s' % ( settings.PATH_TO_ARCHIVES_PARSED_DIRECTORY, parsed_file_name )
+  parsed_file_archive_path = '%s/%s' % ( PATH_TO_ARCHIVES_PARSED_DIRECTORY, parsed_file_name )
   f = open( parsed_file_archive_path, 'w' )
   f.write( string_data )
   f.close()
@@ -213,7 +213,7 @@ utility_code.updateLog( message='- count confirmed to be: %s' % confirmed_count 
 
 try:
   count_file_name = 'REQ-PARSED_%s.cnt' % date_stamp
-  count_file_las_destination_path = '%s/%s' % ( settings.PATH_TO_PARSED_ANNEX_COUNT_DIRECTORY, count_file_name )
+  count_file_las_destination_path = '%s/%s' % ( PATH_TO_PARSED_ANNEX_COUNT_DIRECTORY, count_file_name )
   f = open( count_file_las_destination_path, 'w' )
   f.write( str(confirmed_count) + '\n' )
   f.close()
@@ -226,7 +226,7 @@ except Exception, e:
 
 # try:
 #   count_file_name = 'REQ-PARSED_%s.cnt' % date_stamp
-#   count_file_las_destination_path = '%s/%s' % ( settings.PATH_TO_PARSED_ANNEX_COUNT_DIRECTORY, count_file_name )
+#   count_file_las_destination_path = '%s/%s' % ( PATH_TO_PARSED_ANNEX_COUNT_DIRECTORY, count_file_name )
 #   f = open( count_file_las_destination_path, 'w' )
 #   f.write( str(len(new_item_list)) + '\n' )
 #   f.close()
@@ -241,7 +241,7 @@ except Exception, e:
 
 ## copy parsed file to annex file-receiving folder
 
-parsed_file_las_destination_path = '%s/%s' % ( settings.PATH_TO_PARSED_ANNEX_DATA_DIRECTORY, parsed_file_name )
+parsed_file_las_destination_path = '%s/%s' % ( PATH_TO_PARSED_ANNEX_DATA_DIRECTORY, parsed_file_name )
 try:
   shutil.copyfile( parsed_file_archive_path, parsed_file_las_destination_path )
   os.chmod( parsed_file_archive_path, 0666 )   # rw-/rw-/rw-
@@ -263,16 +263,16 @@ except Exception, e:
 ## delete original
 
 try:
-  os.remove( settings.PATH_TO_SOURCE_FILE )
-  copy_check = utility_code.checkFileExistence( settings.PATH_TO_SOURCE_FILE )   # should not exist
+  os.remove( PATH_TO_SOURCE_FILE )
+  copy_check = utility_code.checkFileExistence( PATH_TO_SOURCE_FILE )   # should not exist
   if copy_check == 'exists':
-    message = '- delete of original file at "%s" failed, as determined by copy_check' % settings.PATH_TO_SOURCE_FILE
+    message = '- delete of original file at "%s" failed, as determined by copy_check' % PATH_TO_SOURCE_FILE
     utility_code.updateLog( message=message, message_importance='high' )
     sys.exist( message )
   else:
-    utility_code.updateLog( message='- source file at "%s" deleted' % settings.PATH_TO_SOURCE_FILE )
+    utility_code.updateLog( message='- source file at "%s" deleted' % PATH_TO_SOURCE_FILE )
 except Exception, e:
-  message = '- delete of original file at "%s" failed; exception is: %s' % ( settings.PATH_TO_SOURCE_FILE, e )
+  message = '- delete of original file at "%s" failed; exception is: %s' % ( PATH_TO_SOURCE_FILE, e )
   utility_code.updateLog( message=message, message_importance='high' )
   sys.exist( message )
 
