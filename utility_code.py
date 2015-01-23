@@ -65,7 +65,6 @@ def convertJosiahPickupAtCode( code ):
 
   JOSIAH_PICKUP_AT_TO_LAS_DELIVERY_STOP_CONVERTER_API_URL_PREFIX = os.environ[u'AN_PR_PA__JOSIAH_PICKUP_AT_TO_LAS_DELIVERY_STOP_CONVERTER_API_URL_PREFIX']
 
-  # full_url = settings.JOSIAH_PICKUP_AT_TO_LAS_DELIVERY_STOP_CONVERTER_API_URL_PREFIX + urllib.quote( code )
   full_url = u'%s%s' % ( JOSIAH_PICKUP_AT_TO_LAS_DELIVERY_STOP_CONVERTER_API_URL_PREFIX, urllib.quote(code) )
 
   try:
@@ -544,22 +543,25 @@ def postFileData( identifier, file_data, update_type ):
   - Called by: opac_to_las_python_parser_code.controller
   '''
 
+  ADMIN_LOG_URL = os.environ[u'AN_PR_PA__ADMIN_LOG_URL']
+  ADMIN_LOG_KEY = os.environ[u'AN_PR_PA__ADMIN_LOG_KEY']
+
   if update_type == 'original_file':
     values = {
-      'key': settings.JOSIAH_TO_LAS_LOG_KEY,
+      'key': ADMIN_LOG_KEY,
       'identifier': identifier,
       'original_file_data': file_data
       }
   else:
     values = {
-      'key': settings.JOSIAH_TO_LAS_LOG_KEY,
+      'key': ADMIN_LOG_KEY,
       'identifier': identifier,
       'parsed_file_data': file_data
       }
 
   try:
     data = urllib.urlencode(values)
-    request = urllib2.Request( settings.JOSIAH_TO_LAS_LOG_URL, data )
+    request = urllib2.Request( ADMIN_LOG_URL, data )
     response = urllib2.urlopen(request)
     returned_data = response.read()
     return returned_data
