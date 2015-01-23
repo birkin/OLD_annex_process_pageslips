@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-import json, os, urllib, urllib2
+import datetime, json, os, urllib, urllib2
 
 
 def checkDirectoryExistence( directory_path ):
@@ -8,8 +8,6 @@ def checkDirectoryExistence( directory_path ):
   - Called by: opac_to_las_python_parser_code.controller
   - Purpose: confirm existence of directories before starting processing.
   '''
-
-  import os
 
   if os.path.exists(directory_path):
     return 'exists'
@@ -546,8 +544,6 @@ def postFileData( identifier, file_data, update_type ):
   - Called by: opac_to_las_python_parser_code.controller
   '''
 
-  import urllib, urllib2
-
   if update_type == 'original_file':
     values = {
       'key': settings.JOSIAH_TO_LAS_LOG_KEY,
@@ -596,10 +592,8 @@ def prepareLasDate( date_object=None ):
   - Purpose: to create a date string like 'Wed Jul 01 2005'. In practice, no date will be passed in, but the 'date_object=None' allows for easy testing.
   '''
 
-  from datetime import datetime
-
   if date_object == None:
-    date_object = datetime.now()
+    date_object = datetime.datetime.now()
 
   return date_object.strftime( '%a %b %d %Y' )
 
