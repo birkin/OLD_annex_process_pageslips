@@ -25,22 +25,17 @@ class Tester(unittest.TestCase):
     # end def test_convertJosiahLocationCode()
 
 
-
   def test_convertJosiahPickupAtCode(self):
-    '''input page-slip; output Annex 'delivery-stop-code' (josiah 'pickup-at-code')'''
-
-    josiah_pickup_at_code = 'ROCK'
-    expected = 'RO'
-    result = utility_code.convertJosiahPickupAtCode( josiah_pickup_at_code )
-    self.assertEqual( expected, result, '\n- expected is: %s\n  - result is: %s' % (expected, result) )
-
-    josiah_pickup_at_code = 'John Hay Library'
-    expected = 'HA'
-    result = utility_code.convertJosiahPickupAtCode( josiah_pickup_at_code )
-    self.assertEqual( expected, result, '\n- expected is: %s\n  - result is: %s' % (expected, result) )
-
-    # end def test_convertJosiahPickupAtCode()
-
+    """ Takes the josiah `pickup-at` code; returns the annex `delivery-stop` code."""
+    self.assertEqual(
+      u'RO',
+      utility_code.convertJosiahPickupAtCode(u'ROCK') )
+    self.assertEqual(
+      u'HA',
+      utility_code.convertJosiahPickupAtCode(u'John Hay Library') )
+    self.assertEqual(
+      u'ED',
+      utility_code.convertJosiahPickupAtCode(u'Elec. Delivery (Annex Articles)') )
 
 
   def test_determineCount(self):
@@ -227,37 +222,17 @@ class Tester(unittest.TestCase):
     # end def test_parseJosiahLocationCode()
 
 
-
-  # def test_parseJosiahLocationCode(self):
-  #   '''input page-slip; output Josiah location code (annex 'customer_code')'''
-  #
-  #   # 'ANNEX'
-  #   single_pageslip = ['   Brown University', '   Gateway Services, Rockefeller Library', '   10 Prospect Street - Box A', '   Providence, RI 02912', '', '   05-27-05', '', '', '', '', '          barcod', '          name', '          BROWN UNIVERSITY', '          U LIBR-WEB SERV - BOX A', '          PROVIDENCE, RI 02912-9101', '', '', '   Please page this material and', '   forward to the circulation unit.', '', '', '   AUTHOR:  Darlington, Marwood,', '   Irish Orpheus, the life of Patrick S. Gilmore, ba', '   IMPRINT: Philadelphia, Olivier-Maney-Klein', '   PUB DATE: [1950]', '   DESC:    130 p. illus., ports. 21 cm', '   CALL NO: ML422.G48 D3', '   VOLUME:  ', '   BARCODE: 3 1236 07030 3881', '   STATUS: AVAILABLE', '   REC NO:  .i10295297', '   LOCATION: ANNEX', '   PICKUP AT: ROCK', '   OPACMSG: ', '', '', '', '', '   38']
-  #   expected = 'QS'
-  #   result = utility_code.parseJosiahLocationCode( single_pageslip )
-  #   self.assertEqual( expected, result, '\n- expected is: %s\n  - result is: %s' % (expected, result) )
-  #
-  #   # end def test_parseJosiahLocationCode()
-
-
-
   def test_parseJosiahPickupAtCode(self):
-    '''input page-slip lines; output Josiah pickup-at code (annex 'delivery-stop code')'''
-
-    # 'ROCK'
-    single_pageslip = ['   Brown University', '   Gateway Services, Rockefeller Library', '   10 Prospect Street - Box A', '   Providence, RI 02912', '', '   05-27-05', '', '', '', '', '          barcod', '          name', '          BROWN UNIVERSITY', '          U LIBR-WEB SERV - BOX A', '          PROVIDENCE, RI 02912-9101', '', '', '   Please page this material and', '   forward to the circulation unit.', '', '', '   AUTHOR:  Darlington, Marwood,', '   Irish Orpheus, the life of Patrick S. Gilmore, ba', '   IMPRINT: Philadelphia, Olivier-Maney-Klein', '   PUB DATE: [1950]', '   DESC:    130 p. illus., ports. 21 cm', '   CALL NO: ML422.G48 D3', '   VOLUME:  ', '   BARCODE: 3 1236 07030 3881', '   STATUS: AVAILABLE', '   REC NO:  .i10295297', '   LOCATION: ANNEX', '   PICKUP AT: ROCK', '   OPACMSG: ', '', '', '', '', '   38']
-    expected = 'RO'
-    result = utility_code.parseJosiahPickupAtCode( single_pageslip )
-    self.assertEqual( expected, result, '\n- expected is: %s\n  - result is: %s' % (expected, result) )
-
-    # empty
-    single_pageslip = ['   Brown University', '   Gateway Services, Rockefeller Library', '   10 Prospect Street - Box A', '   Providence, RI 02912', '', '   Tue Nov 22 2005', '', '', '', '', '          1 1234 12345 1234', '          name', '          BROWN UNIVERSITY', '          BOX 1234', '          PROVIDENCE, RI 02912-3198', '', '', '   Please page this material and', '   forward to the circulation unit.', '', '', '   AUTHOR:  Breggin, Peter Roger,', '   Toxic psychiatry : why therapy, empathy, and love', "   IMPRINT: New York : St. Martin's Press,\n", '   PUB DATE: 1991', '   DESC:    464 p. ; 24 cm', '   CALL NO: ', '   VOLUME:  ', '   BARCODE: JH16TV', '   STATUS: AVAILABLE', '   REC NO:  .i12345189', '   LOCATION: ANNEX', '   PICKUP AT:', '', '', '', '', '', '   38:4']
-    expected = '?'
-    result = utility_code.parseJosiahPickupAtCode( single_pageslip )
-    self.assertEqual( expected, result, '\n- expected is: %s\n  - result is: %s' % (expected, result) )
-
-    # end def test_parseJosiahPickupAtCode()
-
+    """ Takes lines list, returns josiah `pickup-at` code (the annex `delivery-stop` code). """
+    # 'PICKUP AT: ROCK'
+    lines = ['   Brown University', '   Gateway Services, Rockefeller Library', '   10 Prospect Street - Box A', '   Providence, RI 02912', '', '   05-27-05', '', '', '', '', '          barcod', '          name', '          BROWN UNIVERSITY', '          U LIBR-WEB SERV - BOX A', '          PROVIDENCE, RI 02912-9101', '', '', '   Please page this material and', '   forward to the circulation unit.', '', '', '   AUTHOR:  Darlington, Marwood,', '   Irish Orpheus, the life of Patrick S. Gilmore, ba', '   IMPRINT: Philadelphia, Olivier-Maney-Klein', '   PUB DATE: [1950]', '   DESC:    130 p. illus., ports. 21 cm', '   CALL NO: ML422.G48 D3', '   VOLUME:  ', '   BARCODE: 3 1236 07030 3881', '   STATUS: AVAILABLE', '   REC NO:  .i10295297', '   LOCATION: ANNEX', '   PICKUP AT: ROCK', '   OPACMSG: ', '', '', '', '', '   38']
+    self.assertEqual( u'RO', utility_code.parseJosiahPickupAtCode(lines) )
+    # 'PICKUP AT: Elec. Delivery (Annex Articles)'
+    lines = ['   Brown University', '   Gateway Services, Rockefeller Library', '   10 Prospect Street - Box A', '   Providence, RI 02912', '', '   Mon Jan 26 2015', '', '', '', '', '          2 1236 00801 6417', '          KYLE DAVID GION', '          BROWN UNIVERSITY', '          BOX 2851', '          PROVIDENCE, RI 02912-2851', '', '', '   Please page this material and', '   forward to the circulation unit.', '', '', '   AUTHOR:', '   Journal of social and personal relationships', '   IMPRINT: London : Sage Publications,', '   PUB DATE: c1984-', '   DESC:    v. ; 22 cm', '   CALL NO: HM132 .J86x 14 (1997)', '   VOLUME:  14 (1997)', '   BARCODE: 3 1236 09014 6286', '   STATUS: AVAILABLE', '   REC NO:  .i11901707', '   LOCATION: ANNEX', '   PICKUP AT: Elec. Delivery (Annex Articles)', '', '', '', '', '', '   38:16']
+    self.assertEqual( u'ED', utility_code.parseJosiahPickupAtCode(lines) )
+    # 'PICKUP AT:'
+    lines = ['   Brown University', '   Gateway Services, Rockefeller Library', '   10 Prospect Street - Box A', '   Providence, RI 02912', '', '   Tue Nov 22 2005', '', '', '', '', '          1 1234 12345 1234', '          name', '          BROWN UNIVERSITY', '          BOX 1234', '          PROVIDENCE, RI 02912-3198', '', '', '   Please page this material and', '   forward to the circulation unit.', '', '', '   AUTHOR:  Breggin, Peter Roger,', '   Toxic psychiatry : why therapy, empathy, and love', "   IMPRINT: New York : St. Martin's Press,\n", '   PUB DATE: 1991', '   DESC:    464 p. ; 24 cm', '   CALL NO: ', '   VOLUME:  ', '   BARCODE: JH16TV', '   STATUS: AVAILABLE', '   REC NO:  .i12345189', '   LOCATION: ANNEX', '   PICKUP AT:', '', '', '', '', '', '   38:4']
+    self.assertEqual( u'?', utility_code.parseJosiahPickupAtCode(lines) )
 
 
   def test_parseNote(self):
