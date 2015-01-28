@@ -8,6 +8,25 @@ sys.path.append( os.environ[u'AN_PR_PA__ENCLOSING_PROJECT_PATH'] )
 import pprint, unittest
 from annex_process_pageslips import utility_code
 
+TEST_FILES_DIR_PATH = os.environ[u'AN_PR_PA__TEST_FILES_DIR_PATH']
+
+
+class ItemListMakerTest( unittest.TestCase ):
+
+  def setUp( self ):
+    self.item_list_maker = utility_code.ItemListMaker()
+
+  def test_make_lines( self ):
+    with open( u'%s/%s' % (TEST_FILES_DIR_PATH, u'testFile04_longNotes.txt') ) as f:
+      text = f.read()
+    lines = self.item_list_maker.make_lines( text )
+    self.assertEqual(
+      list,
+      type(lines) )
+    self.assertEqual(
+      unicode,
+      type(lines[0]) )
+
 
 
 class Tester(unittest.TestCase):

@@ -3,6 +3,42 @@
 import datetime, json, os, urllib, urllib2
 
 
+class ItemListMaker( object ):
+  """ Breaks pageslip file into list of requests, where each request is a list of lines. """
+
+  def __init__( self ):
+    self.items = []
+    self.item = []
+
+  def make_item_list( self, text ):
+    """ Turns utf8-text into list of requests, where each request is a list of lines. """
+    unicode_lines = self.make_lines( text )
+    for line in unicode_lines:
+      if self.check_start( line ) == True:
+        self.items.append( self.item )  # copy previous item to items
+        self.item = []  # clear item
+        self.item.append( line )  # start item
+      if self.check_start( line ) == False:
+        self.item.append( line )
+    self.items.append( self.item )  # add that last one
+
+  def make_lines( self, text ):
+    """ Turns text into lines."""
+    assert type(text) == str
+    unicode_text = text.decode( u'utf-8' )
+    lines = unicode_text.split( u'\n' )
+    return lines
+
+  def check_start( self, line ):
+    """ Determines if line is beginning of an item. """
+    if u'Brown' in line:
+      return True
+    else:
+      return False
+
+  # end class ItemListMaker()
+
+
 def checkDirectoryExistence( directory_path ):
   '''
   - Called by: opac_to_las_python_parser_code.controller
