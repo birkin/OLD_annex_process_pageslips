@@ -1,21 +1,18 @@
-ReadMe contents
----------------
+### ReadMe contents ###
 
 on this page...
-- qualifier
-- process overview
+- [qualifier](#qualifier)
+- [process overview](#codecontext-overview)
 - [contacts](#contacts)
 - [license](#license)
 
 
-Qualifier
----------
+### Qualifier ###
 
 This is ancient code updated just enough to get onto github. It's one of my first (2005) python projects; I went a bit overboard in abandonment of classes in my flight from java.
 
 
-Code/context overview
----------------------
+### Code/context overview ###
 
 Patrons sometimes request, from our III opac, items which are stored at the Annex, Brown Library's offsite storage facility.
 
@@ -32,18 +29,14 @@ The 'controller' script...
 - deletes the original file
 
 
-Contacts
---------
+### Contacts ###
 
 Domain contact: bonnie_buzzell@brown.edu
 
 Programmer: birkin_diana@brown.edu
 
 
-<a id="license"></a>
-
-License
--------
+### License ###
 
 The MIT License (MIT)
 
