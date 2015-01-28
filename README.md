@@ -1,10 +1,11 @@
 ReadMe contents
 ---------------
 
+on this page...
 - qualifier
 - process overview
 - contacts
-- license
+- [license](#license)
 
 
 Qualifier
@@ -14,9 +15,9 @@ This is ancient code updated just enough to get onto github. It's one of my firs
 
 
 Code/context overview
-----------------
+---------------------
 
-Patrons sometimes request items, from our III opac, which are stored at the Annex, Brown Library's offsite storage facility.
+Patrons sometimes request, from our III opac, items which are stored at the Annex, Brown Library's offsite storage facility.
 
 A (separate) script periodically FTPs opac request page-slips to the Annex server.
 
@@ -38,6 +39,8 @@ Domain contact: bonnie_buzzell@brown.edu
 
 Programmer: birkin_diana@brown.edu
 
+
+<a id="license"></a>
 
 License
 -------
