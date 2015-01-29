@@ -27,6 +27,80 @@ class ItemListMakerTest( unittest.TestCase ):
       unicode,
       type(lines[0]) )
 
+  ## test clean_lines()
+
+  def test_clean_items_simple_good( self ):
+    self.item_list_maker.items = [ [], ['a', 'b'], ['c', 'd'] ]
+    self.item_list_maker.clean_items()
+    self.assertEqual(
+      [ ['a', 'b'], ['c', 'd'] ],  # initial empty list gone
+      self.item_list_maker.items
+      )
+
+  def test_clean_items_single_extra_space( self ):
+    self.item_list_maker.items = [ [], ['a', 'b', ''], ['c', 'd'] ]
+    self.item_list_maker.clean_items()
+    self.assertEqual(
+      [ ['a', 'b'], ['c', 'd'] ],  # missing '' gone
+      self.item_list_maker.items
+      )
+
+  def test_clean_items_multiple_extra_spaces( self ):
+    self.item_list_maker.items = [ [], ['a', 'b', '', ''], ['c', 'd'] ]
+    self.item_list_maker.clean_items()
+    self.assertEqual(
+      [ ['a', 'b'], ['c', 'd'] ],  # missing '' gone
+      self.item_list_maker.items
+      )
+
+  ## test make_item_list()
+
+  def test_single_pageslip( self ):
+    with open( u'%s/%s' % (TEST_FILES_DIR_PATH, u'testFile01_singleEntry.txt') ) as f:
+      text = f.read()
+    processed_data = self.item_list_maker.make_item_list( text )
+    self.assertEqual( 1, len(processed_data) )  # 1 page-slip
+    self.assertEqual( 39, len(processed_data[0]) )  # 39 lines in the first (and only) page-slip
+
+  def test_single_short_pageslip( self ):
+    with open( u'%s/%s' % (TEST_FILES_DIR_PATH, u'testFile02_incorrectSciPickup.txt') ) as f:
+      text = f.read()
+    processed_data = self.item_list_maker.make_item_list( text )
+    self.assertEqual( 1, len(processed_data) )  # 1 page-slip
+    self.assertEqual( 35, len(processed_data[0]) )  # lines in the first (and only) page-slip
+
+  def test_single_pageslip_no38( self ):
+    with open( u'%s/%s' % (TEST_FILES_DIR_PATH, u'testFile11_singleNo38.txt') ) as f:
+      text = f.read()
+    processed_data = self.item_list_maker.make_item_list( text )
+    self.assertEqual( 1, len(processed_data) )  # 1 page-slip
+    self.assertEqual( 39, len(processed_data[0]) )  # lines in the first (and only) page-slip
+
+  def test_multiple_pageslips( self ):
+    with open( u'%s/%s' % (TEST_FILES_DIR_PATH, u'testFile03_itemNumberAddition.txt') ) as f:
+      text = f.read()
+    processed_data = self.item_list_maker.make_item_list( text )
+    self.assertEqual( 6, len(processed_data) )  # page-slips
+    self.assertEqual( 39, len(processed_data[0]) )  # lines
+
+  def test_multiple_pageslips_one_missing_38( self ):
+    with open( u'%s/%s' % (TEST_FILES_DIR_PATH, u'testFile04_longNotes.txt') ) as f:
+      text = f.read()
+    processed_data = self.item_list_maker.make_item_list( text )
+    # pprint.pprint( processed_data )
+    self.assertEqual( 7, len(processed_data) )  # page-slips
+    self.assertEqual( 39, len(processed_data[0]) )  # lines
+    self.assertEqual( u'today. Thanks.', processed_data[1][-1].strip() )  # last line of second page-slip
+
+  def test_multiple_pageslips_missing_brown_university_start( self ):
+    with open( u'%s/%s' % (TEST_FILES_DIR_PATH, u'testFile12_missing_brown_address.txt') ) as f:
+      text = f.read()
+    processed_data = self.item_list_maker.make_item_list( text )
+    pprint.pprint( processed_data )
+    # pprint.pprint( processed_data )
+    self.assertEqual( 6, len(processed_data) )  # page-slips
+
+  # end class ItemListMakerTest()
 
 
 class Tester(unittest.TestCase):
@@ -177,15 +251,16 @@ class Tester(unittest.TestCase):
     # file_reference = open( 'test_files/testFile04_longNotes.txt' )
     file_reference = open( u'%s/%s' % (TEST_FILES_DIR_PATH, u'testFile04_longNotes.txt') )
     processed_data = utility_code.makeItemList( file_reference )
+    pprint.pprint( processed_data )
     expected = 7   # meaning there's one page-slip in the processed_data list
     result = len( processed_data )
     self.assertEqual( expected, result, '\n- expected is: %s\n  - result is: %s' % (expected, result) )
     expected = 39   # meaning there are 39 lines in the first page-slip
     result = len( processed_data[0] )
     self.assertEqual( expected, result, '\n- expected is: %s\n  - result is: %s' % (expected, result) )
-    expected = 39   # meaning there are 39 lines in the second (weird) page-slip
-    result = len( processed_data[0] )
-    self.assertEqual( expected, result, '\n- expected is: %s\n  - result is: %s' % (expected, result) )
+    # expected = 39   # meaning there are 39 lines in the second (weird) page-slip
+    # result = len( processed_data[1] )
+    # self.assertEqual( expected, result, '\n- expected is: %s\n  - result is: %s' % (expected, result) )
 
     # multiple pageslips, first two without the usual 'Brown University' four address lines
     # file_reference = open( 'test_files/testFile12_missing_brown_address.txt' )

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-import datetime, json, os, urllib, urllib2
+import datetime, json, os, pprint, urllib, urllib2
 
 
 class ItemListMaker( object ):
@@ -15,26 +15,66 @@ class ItemListMaker( object ):
     unicode_lines = self.make_lines( text )
     for line in unicode_lines:
       if self.check_start( line ) == True:
-        self.items.append( self.item )  # copy previous item to items
+        self.items.append( self.item )  # copy previous item to items (first appended item will be empty)
         self.item = []  # clear item
-        self.item.append( line )  # start item
-      if self.check_start( line ) == False:
-        self.item.append( line )
+      self.item.append( line )  # add line to the existing or new item
     self.items.append( self.item )  # add that last one
+    self.clean_items()
+    return self.items
 
   def make_lines( self, text ):
-    """ Turns text into lines."""
+    """ Turns text into lines.
+        Called by make_item_list() """
     assert type(text) == str
     unicode_text = text.decode( u'utf-8' )
     lines = unicode_text.split( u'\n' )
     return lines
 
   def check_start( self, line ):
-    """ Determines if line is beginning of an item. """
-    if u'Brown' in line:
+    """ Determines if line is beginning of an item.
+        Called by make_item_list() """
+    print u'- here...'; print line.strip()[0:3]; print len(self.item)
+    if u'Brown University' in line:
+      return True
+    elif line.strip()[0:3] in [ 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun' ] and len(self.item) < 1:
+      print u'- in elif'
       return True
     else:
       return False
+
+  # def check_start( self, line ):
+  #   """ Determines if line is beginning of an item.
+  #       Called by make_item_list() """
+  #   if u'Brown University' in line:
+  #     return True
+  #   else:
+  #     return False
+
+  def clean_items( self ):
+    """ Removes initial empty item and checks each item's last-line.
+        Called by make_item_list() """
+    self.items = self.items[ 1: ]  # get rid of initial empty item
+    new_items = []
+    for item in self.items:
+      item = self.remove_empty_lines( item )
+      new_items.append( item )
+    self.items = new_items
+    return
+
+  def remove_empty_lines( self, item ):
+    """ Removes empty lines from end of page-slip.
+        Called by clean_items() """
+    item.reverse()  # switches line order for easy looping
+    new_item = []
+    check_flag = True
+    for line in item:
+      if line.strip() == u'' and check_flag == True:  # if line is empty, ignore
+        pass
+      else:  # otherwise, copy, and stop checking, since the trailing empty lines have been removed
+        check_flag = False
+        new_item.append( line )
+    new_item.reverse()  # switch back to proper line order
+    return new_item
 
   # end class ItemListMaker()
 
