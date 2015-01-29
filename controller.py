@@ -116,12 +116,14 @@ if not post_result == 'success':
 ## parse pageslip file
 
 # get a list of pageslip objects -- each pageslip a list of lines
-lines = data.split( '\n' )
-item_list = utility_code.makeItemList( lines )
+item_list_maker = utility_code.ItemListMaker()
+item_list = item_list_maker( data )
 utility_code.updateLog( message='- %s records to be processed' % len(item_list) )
-# print '- %s records to be processed' % len(item_list)
-# print '- data is: %s' % data
-# print '- item_list is: %s' % str(item_list)
+
+# # get a list of pageslip objects -- each pageslip a list of lines
+# lines = data.split( '\n' )
+# item_list = utility_code.makeItemList( lines )
+# utility_code.updateLog( message='- %s records to be processed' % len(item_list) )
 
 # process each pageslip
 new_item_list = []
@@ -146,7 +148,6 @@ for item in item_list:
   except Exception, e:
     utility_code.updateLog( message='- iterating through item_list; problem with item "%s"; exception is: %s' % (item, e), message_importance='high' )
 utility_code.updateLog( message='- %s items parsed' % pageslip_count )
-# print '- %s items parsed' % pageslip_count
 
 
 

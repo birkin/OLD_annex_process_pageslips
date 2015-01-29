@@ -249,7 +249,6 @@ class Tester(unittest.TestCase):
     # file_reference = open( 'test_files/testFile04_longNotes.txt' )
     file_reference = open( u'%s/%s' % (TEST_FILES_DIR_PATH, u'testFile04_longNotes.txt') )
     processed_data = utility_code.makeItemList( file_reference )
-    pprint.pprint( processed_data )
     expected = 7   # meaning there's one page-slip in the processed_data list
     result = len( processed_data )
     self.assertEqual( expected, result, '\n- expected is: %s\n  - result is: %s' % (expected, result) )
