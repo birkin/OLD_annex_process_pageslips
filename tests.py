@@ -96,8 +96,6 @@ class ItemListMakerTest( unittest.TestCase ):
     with open( u'%s/%s' % (TEST_FILES_DIR_PATH, u'testFile12_missing_brown_address.txt') ) as f:
       text = f.read()
     processed_data = self.item_list_maker.make_item_list( text )
-    pprint.pprint( processed_data )
-    # pprint.pprint( processed_data )
     self.assertEqual( 6, len(processed_data) )  # page-slips
 
   # end class ItemListMakerTest()

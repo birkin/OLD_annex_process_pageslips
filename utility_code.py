@@ -15,10 +15,10 @@ class ItemListMaker( object ):
     unicode_lines = self.make_lines( text )
     for line in unicode_lines:
       if self.check_start( line ) == True:
-        self.items.append( self.item )  # copy previous item to items (first appended item will be empty)
+        self.items.append( self.item )  # copies current item to items
         self.item = []  # clear item
-      self.item.append( line )  # add line to the existing or new item
-    self.items.append( self.item )  # add that last one
+      self.conditionally_append_line_to_item( line )
+    self.items.append( self.item )  # adds last item
     self.clean_items()
     return self.items
 
@@ -33,31 +33,32 @@ class ItemListMaker( object ):
   def check_start( self, line ):
     """ Determines if line is beginning of an item.
         Called by make_item_list() """
-    print u'- here...'; print line.strip()[0:3]; print len(self.item)
     if u'Brown University' in line:
       return True
     elif line.strip()[0:3] in [ 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun' ] and len(self.item) < 1:
-      print u'- in elif'
+      return True
+    elif len(self.item) > 1 and self.item[-1].strip()[0:4] in [ '38:1', '38:2', '38:3', '38:4', '38:5', '38:6', '38:7', '38:8', '38:9', '38:0' ]:
       return True
     else:
       return False
 
-  # def check_start( self, line ):
-  #   """ Determines if line is beginning of an item.
-  #       Called by make_item_list() """
-  #   if u'Brown University' in line:
-  #     return True
-  #   else:
-  #     return False
+  def conditionally_append_line_to_item( self, line ):
+    """ Appends line to item if it's not a blank start to a new item.
+        Called by make_item_list() """
+    if len(self.item) == 0 and line.strip() == u'':
+      pass
+    else:
+      self.item.append( line )  # adds line to existing or new item
+    return
 
   def clean_items( self ):
-    """ Removes initial empty item and checks each item's last-line.
+    """ Removes empty items and removes empty trailing lines from each item.
         Called by make_item_list() """
-    self.items = self.items[ 1: ]  # get rid of initial empty item
     new_items = []
     for item in self.items:
-      item = self.remove_empty_lines( item )
-      new_items.append( item )
+      if len(item) > 0:
+        item = self.remove_empty_lines( item )
+        new_items.append( item )
     self.items = new_items
     return
 
@@ -68,12 +69,12 @@ class ItemListMaker( object ):
     new_item = []
     check_flag = True
     for line in item:
-      if line.strip() == u'' and check_flag == True:  # if line is empty, ignore
+      if line.strip() == u'' and check_flag == True:  # doesn't copy empty line
         pass
-      else:  # otherwise, copy, and stop checking, since the trailing empty lines have been removed
+      else:  # otherwise, copies and stops checking, since the trailing empty lines have been removed
         check_flag = False
         new_item.append( line )
-    new_item.reverse()  # switch back to proper line order
+    new_item.reverse()  # switches back to proper line order
     return new_item
 
   # end class ItemListMaker()
