@@ -202,7 +202,8 @@ except Exception, e:
 
 
 ## determine count
-confirmed_count = utility_code.determineCount( len(new_item_list), lines )   # lines is from '''## parse pageslip file''' section
+lines = item_list_maker.make_lines( data )
+confirmed_count = utility_code.determineCount( len(new_item_list), lines )
 if confirmed_count == 0:   # if two methods of determining count don't match, zero is returned
   message='- problem on determining count; quitting'
   utility_code.updateLog( message=message, message_importance='high' )
