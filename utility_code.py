@@ -233,56 +233,6 @@ def makeItemList( lines ):
 
 
 
-# def makeItemList( lines ):
-#   '''
-#   - Called by: opac_to_las_python_parser_code.controller
-#   - Purpose: to break an original page-slip file into a list of separate page-slips.
-#   '''
-#
-#   # lines = the_reference.readlines()
-#   # print '- lines is: %s' % str(lines)
-#
-#   return_list = []
-#   pageslip_lines = []
-#   copy_to_pageslip_lines = False
-#   final_line = 'init'
-#   for line in lines:
-#     # print '- line is: %s' % line
-#     # print '- copy_to_pageslip_lines starts: %s' % copy_to_pageslip_lines
-#     if line.strip() == 'Brown University':   # normal start of True
-#       # print '- here01'
-#       copy_to_pageslip_lines = True
-#     if line.strip() == '38' or line.strip()[0:3] == '38:':   # normal start of False
-#       # print '- here02'
-#       copy_to_pageslip_lines = False
-#
-#     if line.strip() == 'Brown University' and len(pageslip_lines) > 10:   # means an ending '38...' was missing
-#       # print '- here03'
-#       return_list.append( pageslip_lines )
-#       pageslip_lines = []
-#
-#     if copy_to_pageslip_lines == True:
-#       # print '- here04'
-#       pageslip_lines.append( line )
-#     if copy_to_pageslip_lines == False and len(pageslip_lines) > 0:
-#       # print '- here05'
-#       if '38' in line:   # avoids a last-line append when the '38...' is missing
-#         # print '- here06'
-#         pageslip_lines.append( line )
-#       return_list.append( pageslip_lines )
-#       pageslip_lines = []
-#
-#   if len(return_list) == 0 and len(pageslip_lines) > 0:   # handles single-file with no '38...' ending
-#     return_list.append( pageslip_lines )
-#     # print '- copy_to_pageslip_lines ends: %s' % copy_to_pageslip_lines
-#     # print '- pageslip_lines is: %s' % pageslip_lines
-#     # print '--\n--\n--'
-#   return return_list
-#
-#   # end def makeItemList()
-
-
-
 def parseBookBarcode( single_page_slip ):
   '''
   - Purpose: to extract a book-barcode from a page-slip.
@@ -327,27 +277,6 @@ def parseJosiahLocationCode( single_page_slip ):
 
 
 
-# def parseJosiahLocationCode( single_page_slip ):
-#   '''
-#   - Purpose: to extract an las 'customer-code' from a page-slip's josiah 'location-code'.
-#   - Called by: opac_to_las_python_parser_code.controller
-#   '''
-#
-#   return_val = 'init'
-#   for line in single_page_slip:
-#     stripped_line = line.strip()
-#     if 'LOCATION:' in stripped_line:
-#       temp_string = stripped_line[9:]   # gets everything after 'LOCATION:'
-#       temp_string = temp_string.strip()   # removes outside whitespace, leaving Josiah location
-#       return_val = convertJosiahLocationCode( temp_string )
-#       break
-#
-#   return return_val
-#
-#   # end def parseJosiahLocationCode()
-
-
-
 def parseJosiahPickupAtCode( single_page_slip ):
   '''
   - Purpose: to extract an las 'delivery-stop-code' from a page-slip's josiah 'pickup-at-code'.
@@ -367,28 +296,6 @@ def parseJosiahPickupAtCode( single_page_slip ):
   return return_val
 
   # end def parseJosiahPickupAtCode()
-
-
-
-# def parseJosiahPickupAtCode( single_page_slip ):
-#   '''
-#   - Purpose: to extract an las 'delivery-stop-code' from a page-slip's josiah 'pickup-at-code'.
-#   - Called by: opac_to_las_python_parser_code.controller
-#   '''
-#
-#   return_val = 'init'
-#   for line in single_page_slip:
-#     stripped_line = line.strip()
-#     if 'PICKUP AT:' in stripped_line:
-#       temp_string = stripped_line[10:]   # gets everything after 'PICKUP AT:'
-#       temp_string = temp_string.strip()   # removes outside whitespace, leaving Josiah pickup-at code
-#       # print '- temp_string is: %s' % temp_string
-#       return_val = convertJosiahPickupAtCode( temp_string )
-#       break
-#
-#   return return_val
-#
-#   # end def parseJosiahPickupAtCode()
 
 
 
@@ -425,54 +332,6 @@ def parseNote( pageslip_lines ):
     return cleaned_note
 
   # end def parseNote()
-
-
-
-# def parseNote( pageslip_lines ):
-#   '''
-#   - Purpose: to extract a possible note from the lines of a pageslip.
-#   - Called by: opac_to_las_python_parser_code.controller
-#   '''
-#
-#   note = ''
-#   ready_flag = 'red'
-#   for line in pageslip_lines:
-#     print '- line is: %s and the ready_flag is"%s"' % ( line, ready_flag )
-#     if 'PICKUP AT:' in line:
-#       ready_flag = 'yellow'
-#     elif 'NOTE:' in line and ready_flag == 'yellow':
-#       ready_flag = 'green'
-#       temp_string = line.replace( 'NOTE:', '' )
-#       temp_string = temp_string.strip()
-#       note = temp_string
-#     elif ready_flag == 'green' and '38' in line:   # last line; don't process
-#       print '- in 38 line with ready_flag green'
-#       break
-#     elif ready_flag == 'green' and len(line.strip()) > 0:
-#       temp_string = line.strip()
-#       note = note + ' ' + temp_string
-#     elif len(line.strip()) == 0:   # don't process empty line
-#       pass
-#     elif ready_flag == 'yellow':   # all conditions that would change it have already been tested
-#       pass
-#     elif ready_flag == 'red':   # all conditions that would change it have already been tested
-#       pass
-#     else:
-#       print '- oops'
-#       print '- oops line is: %s' % line
-#       print '- oops len is: %s' % len(line)
-#       updateLog( message='in utility_code.parseNote(); unhandled "else"; note so far is: "%s"' % note, message_importance='high' )
-#
-#   cleaned_note = note.replace( '  ', ' ' )
-#   cleaned_note = cleaned_note.replace( '  ', ' ' )   # one more time just to be thorough
-#   cleaned_note = cleaned_note.replace( '"', "'" )
-#
-#   if len( cleaned_note ) < 2:   # note could be blank or just a single space
-#     return '?'
-#   else:
-#     return cleaned_note
-#
-#   # end def parseNote()
 
 
 
@@ -579,38 +438,6 @@ def parseTitle( pageslip_lines ):
   return dequoted_title
 
   # end def parseTitle()
-
-
-
-# def parseTitle( pageslip_lines ):
-#   '''
-#   - Purpose: to extract the item title from the lines of a pageslip.
-#   - Called by: opac_to_las_python_parser_code.controller
-#   '''
-#
-#   line_counter = 0
-#
-#   for line in pageslip_lines:
-#     title_line = 'init'
-#     if 'AUTHOR:' in line:
-#       title_line = pageslip_lines[ line_counter + 1 ]
-#       break
-#     line_counter = line_counter + 1
-#
-#   if title_line == 'init':
-#       return '?'
-#
-#   if 'TITLE:' in title_line:
-#     title_line_2 = title_line.replace( 'TITLE:', '' )
-#     stripped_title = title_line_2.strip()
-#   else:
-#     stripped_title = title_line.strip()
-#
-#   dequoted_title = stripped_title.replace( '"', "'" )
-#
-#   return dequoted_title
-#
-#   # end def parseTitle()
 
 
 
