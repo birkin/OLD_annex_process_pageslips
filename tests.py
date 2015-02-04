@@ -101,6 +101,42 @@ class ItemListMakerTest( unittest.TestCase ):
   # end class ItemListMakerTest()
 
 
+class ParserTest( unittest.TestCase ):
+
+  def setUp( self ):
+    self.parser = utility_code.Parser()
+
+  def test_parseNote(self):
+    """ Parses note string from lines of single pageslip. """
+    ## with note
+    single_pageslip = [
+      '   Brown University', '   Gateway Services, Rockefeller Library', '   10 Prospect Street - Box A', '   Providence, RI 02912', '', '   05-27-05', '', '', '', '', '          barcode abc', '          name', '          BROWN UNIVERSITY', '          U LIBR-WEB SERV - BOX A', '          PROVIDENCE, RI 02912-9101', '', '', '   Please page this material and', '   forward to the circulation unit.', '', '', '   AUTHOR:  Darlington, Marwood,', '   Irish Orpheus, the life of Patrick S. Gilmore, ba', '   IMPRINT: Philadelphia, Olivier-Maney-Klein', '   PUB DATE: [1950]', '   DESC:    130 p. illus., ports. 21 cm', '   CALL NO: ML422.G48 D3', '   VOLUME:  ', '   BARCODE: 3 1236 07030 3881', '   STATUS: AVAILABLE', '   REC NO:  .i10295297', '   LOCATION: ANNEX', '   PICKUP AT: ROCK',
+      '   NOTE: four score and ', '        seven years ago', '        something interesting happened', '', '', '   38' ]
+    self.assertEqual(
+      u'four score and seven years ago something interesting happened',
+      self.parser.parse_note( single_pageslip )
+      )
+    ## without note
+    single_pageslip = [
+      '   Brown University', '   Gateway Services, Rockefeller Library', '   10 Prospect Street - Box A', '   Providence, RI 02912', '', '   05-27-05', '', '', '', '', '          barcode abc', '          name', '          BROWN UNIVERSITY', '          U LIBR-WEB SERV - BOX A', '          PROVIDENCE, RI 02912-9101', '', '', '   Please page this material and', '   forward to the circulation unit.', '', '', '   AUTHOR:  Darlington, Marwood,', '   Irish Orpheus, the life of Patrick S. Gilmore, ba', '   IMPRINT: Philadelphia, Olivier-Maney-Klein', '   PUB DATE: [1950]', '   DESC:    130 p. illus., ports. 21 cm', '   CALL NO: ML422.G48 D3', '   VOLUME:  ', '   BARCODE: 3 1236 07030 3881', '   STATUS: AVAILABLE', '   REC NO:  .i10295297', '   LOCATION: ANNEX', '   PICKUP AT: ROCK',
+      '   ', '', '', '', '', '   38' ]
+    self.assertEqual(
+      u'no_note',
+      self.parser.parse_note( single_pageslip )
+      )
+    ## if note contains quotes
+    single_pageslip = [
+      '   Brown University', '   Gateway Services, Rockefeller Library', '   10 Prospect Street - Box A', '   Providence, RI 02912', '', '   05-27-05', '', '', '', '', '          barcode abc', '          name', '          BROWN UNIVERSITY', '          U LIBR-WEB SERV - BOX A', '          PROVIDENCE, RI 02912-9101', '', '', '   Please page this material and', '   forward to the circulation unit.', '', '', '   AUTHOR:  Darlington, Marwood,', '   Irish Orpheus, the life of Patrick S. Gilmore, ba', '   IMPRINT: Philadelphia, Olivier-Maney-Klein', '   PUB DATE: [1950]', '   DESC:    130 p. illus., ports. 21 cm', '   CALL NO: ML422.G48 D3', '   VOLUME:  ', '   BARCODE: 3 1236 07030 3881', '   STATUS: AVAILABLE', '   REC NO:  .i10295297', '   LOCATION: ANNEX', '   PICKUP AT: ROCK',
+      '   NOTE: four score and ', '        seven years ago', '        something "interesting" happened', '', '', '   38' ]
+    self.assertEqual(
+      u"four score and seven years ago something 'interesting' happened",
+      self.parser.parse_note( single_pageslip )
+      )
+
+  # end class ParserTest()
+
+
+
 class Tester(unittest.TestCase):
 
 
@@ -197,77 +233,77 @@ class Tester(unittest.TestCase):
 
 
 
-  def test_makeItemList(self):
-    '''sending a file-reference; getting back a list of page-slip items'''
+  # def test_makeItemList(self):
+  #   '''sending a file-reference; getting back a list of page-slip items'''
 
-    TEST_FILES_DIR_PATH = os.environ[u'AN_PR_PA__TEST_FILES_DIR_PATH']
+  #   TEST_FILES_DIR_PATH = os.environ[u'AN_PR_PA__TEST_FILES_DIR_PATH']
 
-    # single pageslip
-    file_reference = open( u'%s/%s' % (TEST_FILES_DIR_PATH, u'testFile01_singleEntry.txt') )
-    processed_data = utility_code.makeItemList( file_reference )
-    expected = 1   # meaning there's one page-slip in the processed_data list
-    result = len( processed_data )
-    self.assertEqual( expected, result, '\n- expected is: %s\n  - result is: %s' % (expected, result) )
-    expected = 39   # meaning there are 39 lines in the first (and only) page-slip
-    result = len( processed_data[0] )
-    self.assertEqual( expected, result, '\n- expected is: %s\n  - result is: %s' % (expected, result) )
+  #   # single pageslip
+  #   file_reference = open( u'%s/%s' % (TEST_FILES_DIR_PATH, u'testFile01_singleEntry.txt') )
+  #   processed_data = utility_code.makeItemList( file_reference )
+  #   expected = 1   # meaning there's one page-slip in the processed_data list
+  #   result = len( processed_data )
+  #   self.assertEqual( expected, result, '\n- expected is: %s\n  - result is: %s' % (expected, result) )
+  #   expected = 39   # meaning there are 39 lines in the first (and only) page-slip
+  #   result = len( processed_data[0] )
+  #   self.assertEqual( expected, result, '\n- expected is: %s\n  - result is: %s' % (expected, result) )
 
-    # single short pageslip
-    # file_reference = open( 'test_files/testFile02_incorrectSciPickup.txt' )
-    file_reference = open( u'%s/%s' % (TEST_FILES_DIR_PATH, u'testFile02_incorrectSciPickup.txt') )
-    processed_data = utility_code.makeItemList( file_reference )
-    expected = 1   # meaning there's one page-slip in the processed_data list
-    result = len( processed_data )
-    self.assertEqual( expected, result, '\n- expected is: %s\n  - result is: %s' % (expected, result) )
-    expected = 35   # meaning there are 39 lines in the first (and only) page-slip
-    result = len( processed_data[0] )
-    self.assertEqual( expected, result, '\n- expected is: %s\n  - result is: %s' % (expected, result) )
+  #   # single short pageslip
+  #   # file_reference = open( 'test_files/testFile02_incorrectSciPickup.txt' )
+  #   file_reference = open( u'%s/%s' % (TEST_FILES_DIR_PATH, u'testFile02_incorrectSciPickup.txt') )
+  #   processed_data = utility_code.makeItemList( file_reference )
+  #   expected = 1   # meaning there's one page-slip in the processed_data list
+  #   result = len( processed_data )
+  #   self.assertEqual( expected, result, '\n- expected is: %s\n  - result is: %s' % (expected, result) )
+  #   expected = 35   # meaning there are 39 lines in the first (and only) page-slip
+  #   result = len( processed_data[0] )
+  #   self.assertEqual( expected, result, '\n- expected is: %s\n  - result is: %s' % (expected, result) )
 
-    # single pageslip, no '38...'
-    # file_reference = open( 'test_files/testFile11_singleNo38.txt' )
-    file_reference = open( u'%s/%s' % (TEST_FILES_DIR_PATH, u'testFile11_singleNo38.txt') )
-    processed_data = utility_code.makeItemList( file_reference )
-    expected = 1   # meaning there's one page-slip in the processed_data list
-    result = len( processed_data )
-    self.assertEqual( expected, result, '\n- expected is: %s\n  - result is: %s' % (expected, result) )
-    expected = 39   # meaning there are 39 lines in the first (and only) page-slip
-    result = len( processed_data[0] )
-    self.assertEqual( expected, result, '\n- expected is: %s\n  - result is: %s' % (expected, result) )
+  #   # single pageslip, no '38...'
+  #   # file_reference = open( 'test_files/testFile11_singleNo38.txt' )
+  #   file_reference = open( u'%s/%s' % (TEST_FILES_DIR_PATH, u'testFile11_singleNo38.txt') )
+  #   processed_data = utility_code.makeItemList( file_reference )
+  #   expected = 1   # meaning there's one page-slip in the processed_data list
+  #   result = len( processed_data )
+  #   self.assertEqual( expected, result, '\n- expected is: %s\n  - result is: %s' % (expected, result) )
+  #   expected = 39   # meaning there are 39 lines in the first (and only) page-slip
+  #   result = len( processed_data[0] )
+  #   self.assertEqual( expected, result, '\n- expected is: %s\n  - result is: %s' % (expected, result) )
 
-    # multiple pageslips
-    # file_reference = open( 'test_files/testFile03_itemNumberAddition.txt' )
-    file_reference = open( u'%s/%s' % (TEST_FILES_DIR_PATH, u'testFile03_itemNumberAddition.txt') )
-    processed_data = utility_code.makeItemList( file_reference )
-    expected = 6   # meaning there's one page-slip in the processed_data list
-    result = len( processed_data )
-    self.assertEqual( expected, result, '\n- expected is: %s\n  - result is: %s' % (expected, result) )
-    expected = 39   # meaning there are 39 lines in the first page-slip
-    result = len( processed_data[0] )
-    self.assertEqual( expected, result, '\n- expected is: %s\n  - result is: %s' % (expected, result) )
+  #   # multiple pageslips
+  #   # file_reference = open( 'test_files/testFile03_itemNumberAddition.txt' )
+  #   file_reference = open( u'%s/%s' % (TEST_FILES_DIR_PATH, u'testFile03_itemNumberAddition.txt') )
+  #   processed_data = utility_code.makeItemList( file_reference )
+  #   expected = 6   # meaning there's one page-slip in the processed_data list
+  #   result = len( processed_data )
+  #   self.assertEqual( expected, result, '\n- expected is: %s\n  - result is: %s' % (expected, result) )
+  #   expected = 39   # meaning there are 39 lines in the first page-slip
+  #   result = len( processed_data[0] )
+  #   self.assertEqual( expected, result, '\n- expected is: %s\n  - result is: %s' % (expected, result) )
 
-    # multiple pageslips, one missing last '38...' line
-    # file_reference = open( 'test_files/testFile04_longNotes.txt' )
-    file_reference = open( u'%s/%s' % (TEST_FILES_DIR_PATH, u'testFile04_longNotes.txt') )
-    processed_data = utility_code.makeItemList( file_reference )
-    expected = 7   # meaning there's one page-slip in the processed_data list
-    result = len( processed_data )
-    self.assertEqual( expected, result, '\n- expected is: %s\n  - result is: %s' % (expected, result) )
-    expected = 39   # meaning there are 39 lines in the first page-slip
-    result = len( processed_data[0] )
-    self.assertEqual( expected, result, '\n- expected is: %s\n  - result is: %s' % (expected, result) )
-    # expected = 39   # meaning there are 39 lines in the second (weird) page-slip
-    # result = len( processed_data[1] )
-    # self.assertEqual( expected, result, '\n- expected is: %s\n  - result is: %s' % (expected, result) )
+  #   # multiple pageslips, one missing last '38...' line
+  #   # file_reference = open( 'test_files/testFile04_longNotes.txt' )
+  #   file_reference = open( u'%s/%s' % (TEST_FILES_DIR_PATH, u'testFile04_longNotes.txt') )
+  #   processed_data = utility_code.makeItemList( file_reference )
+  #   expected = 7   # meaning there's one page-slip in the processed_data list
+  #   result = len( processed_data )
+  #   self.assertEqual( expected, result, '\n- expected is: %s\n  - result is: %s' % (expected, result) )
+  #   expected = 39   # meaning there are 39 lines in the first page-slip
+  #   result = len( processed_data[0] )
+  #   self.assertEqual( expected, result, '\n- expected is: %s\n  - result is: %s' % (expected, result) )
+  #   # expected = 39   # meaning there are 39 lines in the second (weird) page-slip
+  #   # result = len( processed_data[1] )
+  #   # self.assertEqual( expected, result, '\n- expected is: %s\n  - result is: %s' % (expected, result) )
 
-    # multiple pageslips, first two without the usual 'Brown University' four address lines
-    # file_reference = open( 'test_files/testFile12_missing_brown_address.txt' )
-    file_reference = open( u'%s/%s' % (TEST_FILES_DIR_PATH, u'testFile12_missing_brown_address.txt') )
-    processed_data = utility_code.makeItemList( file_reference )
-    expected = 6   # this was returning 4 parsed page-slips in old code and in my new code
-    result = len( processed_data )
-    self.assertEqual( expected, result, '\n- expected is: %s\n  - result is: %s' % (expected, result) )
+  #   # multiple pageslips, first two without the usual 'Brown University' four address lines
+  #   # file_reference = open( 'test_files/testFile12_missing_brown_address.txt' )
+  #   file_reference = open( u'%s/%s' % (TEST_FILES_DIR_PATH, u'testFile12_missing_brown_address.txt') )
+  #   processed_data = utility_code.makeItemList( file_reference )
+  #   expected = 6   # this was returning 4 parsed page-slips in old code and in my new code
+  #   result = len( processed_data )
+  #   self.assertEqual( expected, result, '\n- expected is: %s\n  - result is: %s' % (expected, result) )
 
-    # end def test_makeItemList()
+  #   # end def test_makeItemList()
 
 
 
@@ -326,28 +362,28 @@ class Tester(unittest.TestCase):
     self.assertEqual( u'?', utility_code.parseJosiahPickupAtCode(lines) )
 
 
-  def test_parseNote(self):
-    '''input: pageslip, output: note string'''
+  # def test_parseNote(self):
+  #   '''input: pageslip, output: note string'''
 
-    # with note
-    single_pageslip = ['   Brown University', '   Gateway Services, Rockefeller Library', '   10 Prospect Street - Box A', '   Providence, RI 02912', '', '   05-27-05', '', '', '', '', '          barcode abc', '          name', '          BROWN UNIVERSITY', '          U LIBR-WEB SERV - BOX A', '          PROVIDENCE, RI 02912-9101', '', '', '   Please page this material and', '   forward to the circulation unit.', '', '', '   AUTHOR:  Darlington, Marwood,', '   Irish Orpheus, the life of Patrick S. Gilmore, ba', '   IMPRINT: Philadelphia, Olivier-Maney-Klein', '   PUB DATE: [1950]', '   DESC:    130 p. illus., ports. 21 cm', '   CALL NO: ML422.G48 D3', '   VOLUME:  ', '   BARCODE: 3 1236 07030 3881', '   STATUS: AVAILABLE', '   REC NO:  .i10295297', '   LOCATION: ANNEX', '   PICKUP AT: ROCK', '   NOTE: four score and ', '        seven years ago', '        something interesting happened', '', '', '   38']
-    expected = 'four score and seven years ago something interesting happened'
-    result = utility_code.parseNote( single_pageslip )
-    self.assertEqual( expected, result, '\n- expected is: %s\n  - result is: %s' % (expected, result) )
+  #   # with note
+  #   single_pageslip = ['   Brown University', '   Gateway Services, Rockefeller Library', '   10 Prospect Street - Box A', '   Providence, RI 02912', '', '   05-27-05', '', '', '', '', '          barcode abc', '          name', '          BROWN UNIVERSITY', '          U LIBR-WEB SERV - BOX A', '          PROVIDENCE, RI 02912-9101', '', '', '   Please page this material and', '   forward to the circulation unit.', '', '', '   AUTHOR:  Darlington, Marwood,', '   Irish Orpheus, the life of Patrick S. Gilmore, ba', '   IMPRINT: Philadelphia, Olivier-Maney-Klein', '   PUB DATE: [1950]', '   DESC:    130 p. illus., ports. 21 cm', '   CALL NO: ML422.G48 D3', '   VOLUME:  ', '   BARCODE: 3 1236 07030 3881', '   STATUS: AVAILABLE', '   REC NO:  .i10295297', '   LOCATION: ANNEX', '   PICKUP AT: ROCK', '   NOTE: four score and ', '        seven years ago', '        something interesting happened', '', '', '   38']
+  #   expected = 'four score and seven years ago something interesting happened'
+  #   result = utility_code.parseNote( single_pageslip )
+  #   self.assertEqual( expected, result, '\n- expected is: %s\n  - result is: %s' % (expected, result) )
 
-    # without note
-    single_pageslip = ['   Brown University', '   Gateway Services, Rockefeller Library', '   10 Prospect Street - Box A', '   Providence, RI 02912', '', '   05-27-05', '', '', '', '', '          barcode abc', '          name', '          BROWN UNIVERSITY', '          U LIBR-WEB SERV - BOX A', '          PROVIDENCE, RI 02912-9101', '', '', '   Please page this material and', '   forward to the circulation unit.', '', '', '   AUTHOR:  Darlington, Marwood,', '   Irish Orpheus, the life of Patrick S. Gilmore, ba', '   IMPRINT: Philadelphia, Olivier-Maney-Klein', '   PUB DATE: [1950]', '   DESC:    130 p. illus., ports. 21 cm', '   CALL NO: ML422.G48 D3', '   VOLUME:  ', '   BARCODE: 3 1236 07030 3881', '   STATUS: AVAILABLE', '   REC NO:  .i10295297', '   LOCATION: ANNEX', '   PICKUP AT: ROCK', '   ', '', '', '', '', '   38']
-    expected = '?'
-    result = utility_code.parseNote( single_pageslip )
-    self.assertEqual( expected, result, '\n- expected is: %s\n  - result is: %s' % (expected, result) )
+  #   # without note
+  #   single_pageslip = ['   Brown University', '   Gateway Services, Rockefeller Library', '   10 Prospect Street - Box A', '   Providence, RI 02912', '', '   05-27-05', '', '', '', '', '          barcode abc', '          name', '          BROWN UNIVERSITY', '          U LIBR-WEB SERV - BOX A', '          PROVIDENCE, RI 02912-9101', '', '', '   Please page this material and', '   forward to the circulation unit.', '', '', '   AUTHOR:  Darlington, Marwood,', '   Irish Orpheus, the life of Patrick S. Gilmore, ba', '   IMPRINT: Philadelphia, Olivier-Maney-Klein', '   PUB DATE: [1950]', '   DESC:    130 p. illus., ports. 21 cm', '   CALL NO: ML422.G48 D3', '   VOLUME:  ', '   BARCODE: 3 1236 07030 3881', '   STATUS: AVAILABLE', '   REC NO:  .i10295297', '   LOCATION: ANNEX', '   PICKUP AT: ROCK', '   ', '', '', '', '', '   38']
+  #   expected = '?'
+  #   result = utility_code.parseNote( single_pageslip )
+  #   self.assertEqual( expected, result, '\n- expected is: %s\n  - result is: %s' % (expected, result) )
 
-    # if note contains quotes
-    single_pageslip = ['   Brown University', '   Gateway Services, Rockefeller Library', '   10 Prospect Street - Box A', '   Providence, RI 02912', '', '   05-27-05', '', '', '', '', '          barcode abc', '          name', '          BROWN UNIVERSITY', '          U LIBR-WEB SERV - BOX A', '          PROVIDENCE, RI 02912-9101', '', '', '   Please page this material and', '   forward to the circulation unit.', '', '', '   AUTHOR:  Darlington, Marwood,', '   Irish Orpheus, the life of Patrick S. Gilmore, ba', '   IMPRINT: Philadelphia, Olivier-Maney-Klein', '   PUB DATE: [1950]', '   DESC:    130 p. illus., ports. 21 cm', '   CALL NO: ML422.G48 D3', '   VOLUME:  ', '   BARCODE: 3 1236 07030 3881', '   STATUS: AVAILABLE', '   REC NO:  .i10295297', '   LOCATION: ANNEX', '   PICKUP AT: ROCK', '   NOTE: four score and ', '        seven years ago', '        something "interesting" happened', '', '', '   38']
-    expected = "four score and seven years ago something 'interesting' happened"
-    result = utility_code.parseNote( single_pageslip )
-    self.assertEqual( expected, result, '\n- expected is: %s\n  - result is: %s' % (expected, result) )
+  #   # if note contains quotes
+  #   single_pageslip = ['   Brown University', '   Gateway Services, Rockefeller Library', '   10 Prospect Street - Box A', '   Providence, RI 02912', '', '   05-27-05', '', '', '', '', '          barcode abc', '          name', '          BROWN UNIVERSITY', '          U LIBR-WEB SERV - BOX A', '          PROVIDENCE, RI 02912-9101', '', '', '   Please page this material and', '   forward to the circulation unit.', '', '', '   AUTHOR:  Darlington, Marwood,', '   Irish Orpheus, the life of Patrick S. Gilmore, ba', '   IMPRINT: Philadelphia, Olivier-Maney-Klein', '   PUB DATE: [1950]', '   DESC:    130 p. illus., ports. 21 cm', '   CALL NO: ML422.G48 D3', '   VOLUME:  ', '   BARCODE: 3 1236 07030 3881', '   STATUS: AVAILABLE', '   REC NO:  .i10295297', '   LOCATION: ANNEX', '   PICKUP AT: ROCK', '   NOTE: four score and ', '        seven years ago', '        something "interesting" happened', '', '', '   38']
+  #   expected = "four score and seven years ago something 'interesting' happened"
+  #   result = utility_code.parseNote( single_pageslip )
+  #   self.assertEqual( expected, result, '\n- expected is: %s\n  - result is: %s' % (expected, result) )
 
-    # end def test_parseNote()
+  #   # end def test_parseNote()
 
 
 

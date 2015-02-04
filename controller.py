@@ -120,16 +120,14 @@ item_list_maker = utility_code.ItemListMaker()
 item_list = item_list_maker.make_item_list( data )
 utility_code.updateLog( message='- %s records to be processed' % len(item_list) )
 
-# # get a list of pageslip objects -- each pageslip a list of lines
-# lines = data.split( '\n' )
-# item_list = utility_code.makeItemList( lines )
-# utility_code.updateLog( message='- %s records to be processed' % len(item_list) )
+
 
 # process each pageslip
 new_item_list = []
 pageslip_count = 0
 for item in item_list:
   try:
+    parser = utility_code.Parser()
     record_number = utility_code.parseRecordNumber(item)
     book_barcode = utility_code.parseBookBarcode(item)
     las_delivery_stop = utility_code.parseJosiahPickupAtCode(item)
@@ -138,12 +136,13 @@ for item in item_list:
     patron_barcode = utility_code.parsePatronBarcode(item)
     title = utility_code.parseTitle(item)
     las_date = utility_code.prepareLasDate()
-    note = utility_code.parseNote(item)
+    note = parser.parse_note( item )
+    # note = utility_code.parseNote(item)
     full_line = '''"%s","%s","%s","%s","%s","%s","%s","%s","%s"''' % ( record_number, book_barcode, las_delivery_stop, las_customer_code, patron_name, patron_barcode, title, las_date, note )
     new_item_list.append( full_line )
     pageslip_count = pageslip_count + 1
     if pageslip_count % 10 == 0:
-      utility_code.updateLog( message='- %s pageslips processed' % pageslip_count )
+      utility_code.updateLog( message='- %s pageslips processed so far...' % pageslip_count )
       print '.'
   except Exception, e:
     utility_code.updateLog( message='- iterating through item_list; problem with item "%s"; exception is: %s' % (item, e), message_importance='high' )

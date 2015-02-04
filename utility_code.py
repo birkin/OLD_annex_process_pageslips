@@ -80,6 +80,45 @@ class ItemListMaker( object ):
   # end class ItemListMaker()
 
 
+class Parser( object ):
+  """ Parses data-fields from a single pageslip's lines.
+      TODO: refactor rest of parsing functions into here. """
+
+  def parse_note( self, pageslip_lines ):
+    """ Extracts possible note from lines of a single pageslip.
+        Called by controller.py """
+    initial_note = self.grab_note( pageslip_lines )
+    cleaned_note = self.clean_note( initial_note )
+    return cleaned_note
+
+  def grab_note( self, pageslip_lines ):
+    """ Grabs initial note string.
+        Called by parse_note() """
+    note = u''
+    ready_flag = u'red'
+    for line in pageslip_lines:
+      if u'PICKUP AT:' in line:
+        ready_flag = u'yellow'
+      elif u'NOTE:' in line and ready_flag == u'yellow':
+        ready_flag = u'green'
+        note = line.replace( u'NOTE:', u'' ).strip()
+      elif ready_flag == u'green' and len( line.strip() ) > 0 and u'38' not in line:
+        note = note + u' ' + line.strip()
+    return note
+
+  def clean_note( self, initial_note ):
+    """ Removes spaces from note, or sets default note.
+        Called by parse_note() """
+    cleaned_note = initial_note.replace( u'  ', u' ' )
+    cleaned_note = cleaned_note.replace( u'"', u"'" )
+    if len( cleaned_note.strip() ) == 0:
+      cleaned_note = u'no_note'
+    return cleaned_note
+
+  # end class Parser()
+
+
+
 def checkDirectoryExistence( directory_path ):
   '''
   - Called by: opac_to_las_python_parser_code.controller
@@ -181,55 +220,55 @@ def determineCount( number_of_parsed_items, pageslip_lines ):
   # end def determineCount()
 
 
-def makeItemList( lines ):
-  '''
-  - Called by: opac_to_las_python_parser_code.controller
-  - Purpose: to break an original page-slip file into a list of separate page-slips.
-  '''
+# def makeItemList( lines ):
+#   '''
+#   - Called by: opac_to_las_python_parser_code.controller
+#   - Purpose: to break an original page-slip file into a list of separate page-slips.
+#   '''
 
-  # lines = the_reference.readlines()
-  # print '- lines is: %s' % str(lines)
+#   # lines = the_reference.readlines()
+#   # print '- lines is: %s' % str(lines)
 
-  return_list = []
-  pageslip_lines = []
-  copy_to_pageslip_lines = False
-  final_line = 'init'
-  for line in lines:
-    # print '- line is: %s' % line
-    # print '- copy_to_pageslip_lines starts: %s' % copy_to_pageslip_lines
-    if line.strip() == 'Brown University':   # normal start of True
-      # print '- here01'
-      copy_to_pageslip_lines = True
-    if line.strip()[0:4] in [ 'Mon ', 'Tue ', 'Wed ', 'Thu ', 'Fri ', 'Sat ', 'Sun ' ]:
-      copy_to_pageslip_lines = True
-    if line.strip() == '38' or line.strip()[0:3] == '38:':   # normal start of False
-      # print '- here02'
-      copy_to_pageslip_lines = False
+#   return_list = []
+#   pageslip_lines = []
+#   copy_to_pageslip_lines = False
+#   final_line = 'init'
+#   for line in lines:
+#     # print '- line is: %s' % line
+#     # print '- copy_to_pageslip_lines starts: %s' % copy_to_pageslip_lines
+#     if line.strip() == 'Brown University':   # normal start of True
+#       # print '- here01'
+#       copy_to_pageslip_lines = True
+#     if line.strip()[0:4] in [ 'Mon ', 'Tue ', 'Wed ', 'Thu ', 'Fri ', 'Sat ', 'Sun ' ]:
+#       copy_to_pageslip_lines = True
+#     if line.strip() == '38' or line.strip()[0:3] == '38:':   # normal start of False
+#       # print '- here02'
+#       copy_to_pageslip_lines = False
 
-    if line.strip() == 'Brown University' and len(pageslip_lines) > 10:   # means an ending '38...' was missing
-      # print '- here03'
-      return_list.append( pageslip_lines )
-      pageslip_lines = []
+#     if line.strip() == 'Brown University' and len(pageslip_lines) > 10:   # means an ending '38...' was missing
+#       # print '- here03'
+#       return_list.append( pageslip_lines )
+#       pageslip_lines = []
 
-    if copy_to_pageslip_lines == True:
-      # print '- here04'
-      pageslip_lines.append( line )
-    if copy_to_pageslip_lines == False and len(pageslip_lines) > 0:
-      # print '- here05'
-      if '38' in line:   # avoids a last-line append when the '38...' is missing
-        # print '- here06'
-        pageslip_lines.append( line )
-      return_list.append( pageslip_lines )
-      pageslip_lines = []
+#     if copy_to_pageslip_lines == True:
+#       # print '- here04'
+#       pageslip_lines.append( line )
+#     if copy_to_pageslip_lines == False and len(pageslip_lines) > 0:
+#       # print '- here05'
+#       if '38' in line:   # avoids a last-line append when the '38...' is missing
+#         # print '- here06'
+#         pageslip_lines.append( line )
+#       return_list.append( pageslip_lines )
+#       pageslip_lines = []
 
-  if len(return_list) == 0 and len(pageslip_lines) > 0:   # handles single-file with no '38...' ending
-    return_list.append( pageslip_lines )
-    # print '- copy_to_pageslip_lines ends: %s' % copy_to_pageslip_lines
-    # print '- pageslip_lines is: %s' % pageslip_lines
-    # print '--\n--\n--'
-  return return_list
+#   if len(return_list) == 0 and len(pageslip_lines) > 0:   # handles single-file with no '38...' ending
+#     return_list.append( pageslip_lines )
+#     # print '- copy_to_pageslip_lines ends: %s' % copy_to_pageslip_lines
+#     # print '- pageslip_lines is: %s' % pageslip_lines
+#     # print '--\n--\n--'
+#   return return_list
 
-  # end def makeItemList()
+#   # end def makeItemList()
 
 
 
@@ -299,39 +338,39 @@ def parseJosiahPickupAtCode( single_page_slip ):
 
 
 
-def parseNote( pageslip_lines ):
-  '''
-  - Purpose: to extract a possible note from the lines of a pageslip.
-  - Called by: opac_to_las_python_parser_code.controller
-  '''
+# def parseNote( pageslip_lines ):
+#   '''
+#   - Purpose: to extract a possible note from the lines of a pageslip.
+#   - Called by: opac_to_las_python_parser_code.controller
+#   '''
 
-  note = ''
-  ready_flag = 'red'
-  for line in pageslip_lines:
-    # print '- line is: %s and the ready_flag is"%s"' % ( line, ready_flag )
-    if 'PICKUP AT:' in line:
-      ready_flag = 'yellow'
-    elif 'NOTE:' in line and ready_flag == 'yellow':
-      ready_flag = 'green'
-      temp_string = line.replace( 'NOTE:', '' )
-      temp_string = temp_string.strip()
-      note = temp_string
-    elif ready_flag == 'green' and len( line.strip() ) > 0 and '38' not in line:
-      temp_string = line.strip()
-      note = note + ' ' + temp_string
-    else:
-      pass
+#   note = ''
+#   ready_flag = 'red'
+#   for line in pageslip_lines:
+#     # print '- line is: %s and the ready_flag is"%s"' % ( line, ready_flag )
+#     if 'PICKUP AT:' in line:
+#       ready_flag = 'yellow'
+#     elif 'NOTE:' in line and ready_flag == 'yellow':
+#       ready_flag = 'green'
+#       temp_string = line.replace( 'NOTE:', '' )
+#       temp_string = temp_string.strip()
+#       note = temp_string
+#     elif ready_flag == 'green' and len( line.strip() ) > 0 and '38' not in line:
+#       temp_string = line.strip()
+#       note = note + ' ' + temp_string
+#     else:
+#       pass
 
-  cleaned_note = note.replace( '  ', ' ' )
-  cleaned_note = cleaned_note.replace( '  ', ' ' )   # one more time just to be thorough
-  cleaned_note = cleaned_note.replace( '"', "'" )
+#   cleaned_note = note.replace( '  ', ' ' )
+#   cleaned_note = cleaned_note.replace( '  ', ' ' )   # one more time just to be thorough
+#   cleaned_note = cleaned_note.replace( '"', "'" )
 
-  if len( cleaned_note ) < 2:   # note could be blank or just a single space
-    return '?'
-  else:
-    return cleaned_note
+#   if len( cleaned_note ) < 2:   # note could be blank or just a single space
+#     return '?'
+#   else:
+#     return cleaned_note
 
-  # end def parseNote()
+#   # end def parseNote()
 
 
 
