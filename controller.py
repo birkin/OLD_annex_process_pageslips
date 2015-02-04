@@ -117,7 +117,7 @@ if not post_result == 'success':
 
 # get a list of pageslip objects -- each pageslip a list of lines
 item_list_maker = utility_code.ItemListMaker()
-item_list = item_list_maker( data )
+item_list = item_list_maker.make_item_list( data )
 utility_code.updateLog( message='- %s records to be processed' % len(item_list) )
 
 # # get a list of pageslip objects -- each pageslip a list of lines
