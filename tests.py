@@ -98,6 +98,16 @@ class ItemListMakerTest( unittest.TestCase ):
     processed_data = self.item_list_maker.make_item_list( text )
     self.assertEqual( 6, len(processed_data) )  # page-slips
 
+  def test_unexpected_brown_u_string( self ):
+    with open( u'%s/%s' % (TEST_FILES_DIR_PATH, u'testFile13_BrownU_confusion.txt') ) as f:
+      text = f.read()
+    processed_data = self.item_list_maker.make_item_list( text )
+    # pprint.pprint( processed_data )
+    self.assertEqual( 1, len(processed_data) )  # 1 page-slip
+    self.assertEqual( 39, len(processed_data[0]) )  # lines in the first (and only) page-slip
+
+
+
   # end class ItemListMakerTest()
 
 
@@ -107,7 +117,7 @@ class ParserTest( unittest.TestCase ):
     self.parser = utility_code.Parser()
 
   def test_parseNote(self):
-    """ Parses note string from lines of single pageslip. """
+    """ Tests note-parsing from lines of single pageslip. """
     ## with note
     single_pageslip = [
       '   Brown University', '   Gateway Services, Rockefeller Library', '   10 Prospect Street - Box A', '   Providence, RI 02912', '', '   05-27-05', '', '', '', '', '          barcode abc', '          name', '          BROWN UNIVERSITY', '          U LIBR-WEB SERV - BOX A', '          PROVIDENCE, RI 02912-9101', '', '', '   Please page this material and', '   forward to the circulation unit.', '', '', '   AUTHOR:  Darlington, Marwood,', '   Irish Orpheus, the life of Patrick S. Gilmore, ba', '   IMPRINT: Philadelphia, Olivier-Maney-Klein', '   PUB DATE: [1950]', '   DESC:    130 p. illus., ports. 21 cm', '   CALL NO: ML422.G48 D3', '   VOLUME:  ', '   BARCODE: 3 1236 07030 3881', '   STATUS: AVAILABLE', '   REC NO:  .i10295297', '   LOCATION: ANNEX', '   PICKUP AT: ROCK',
@@ -133,12 +143,26 @@ class ParserTest( unittest.TestCase ):
       self.parser.parse_note( single_pageslip )
       )
 
+  def test_parseBookBarcode(self):
+    """ Tests book-barcode parsing from lines of single pageslip. """
+    ## numeric barcode with spaces
+    single_pageslip = ['   Brown University', '   Gateway Services, Rockefeller Library', '   10 Prospect Street - Box A', '   Providence, RI 02912', '', '   05-27-05', '', '', '', '', '          barcod', '          name', '          BROWN UNIVERSITY', '          U LIBR-WEB SERV - BOX A', '          PROVIDENCE, RI 02912-9101', '', '', '   Please page this material and', '   forward to the circulation unit.', '', '', '   AUTHOR:  Darlington, Marwood,', '   Irish Orpheus, the life of Patrick S. Gilmore, ba', '   IMPRINT: Philadelphia, Olivier-Maney-Klein', '   PUB DATE: [1950]', '   DESC:    130 p. illus., ports. 21 cm', '   CALL NO: ML422.G48 D3', '   VOLUME:  ', '   BARCODE: 3 1236 07030 3881', '   STATUS: AVAILABLE', '   REC NO:  .i10295297', '   LOCATION: ANNEX', '   PICKUP AT: ROCK', '   OPACMSG: ', '', '', '', '', '   38']
+    self.assertEqual(
+      u'31236070303881',
+      self.parser.parse_bookbarcode( single_pageslip )
+      )
+    ## 'JH' barcode
+    single_pageslip = ['   Brown University', '   Gateway Services, Rockefeller Library', '   10 Prospect Street - Box A', '   Providence, RI 02912', '', '   Tue Nov 22 2005', '', '', '', '', '          barcode', '          name', '          BROWN UNIVERSITY', '          BOX 1234', '          PROVIDENCE, RI 02912-3198', '', '', '   Please page this material and', '   forward to the circulation unit.', '', '', '   AUTHOR:  Breggin, Peter Roger,', '   Toxic psychiatry : why therapy, empathy, and love', "   IMPRINT: New York : St. Martin's Press,", '   PUB DATE: 1991', '   DESC:    464 p. ; 24 cm', '   CALL NO: ', '   VOLUME:  ', '   BARCODE: JH16TV', '   STATUS: AVAILABLE', '   REC NO:  .i12345189', '   LOCATION: ANNEX HAY', '   PICKUP AT: Rockefeller Library', '', '', '', '', '', '   38:4']
+    self.assertEqual(
+      u'JH16TV',
+      self.parser.parse_bookbarcode( single_pageslip )
+      )
+
   # end class ParserTest()
 
 
 
 class Tester(unittest.TestCase):
-
 
 
   def test_convertJosiahLocationCode(self):
@@ -233,96 +257,22 @@ class Tester(unittest.TestCase):
 
 
 
-  # def test_makeItemList(self):
-  #   '''sending a file-reference; getting back a list of page-slip items'''
+  # def test_parseBookBarcode(self):
+  #   '''input page-slip; output book-barcode'''
 
-  #   TEST_FILES_DIR_PATH = os.environ[u'AN_PR_PA__TEST_FILES_DIR_PATH']
-
-  #   # single pageslip
-  #   file_reference = open( u'%s/%s' % (TEST_FILES_DIR_PATH, u'testFile01_singleEntry.txt') )
-  #   processed_data = utility_code.makeItemList( file_reference )
-  #   expected = 1   # meaning there's one page-slip in the processed_data list
-  #   result = len( processed_data )
-  #   self.assertEqual( expected, result, '\n- expected is: %s\n  - result is: %s' % (expected, result) )
-  #   expected = 39   # meaning there are 39 lines in the first (and only) page-slip
-  #   result = len( processed_data[0] )
+  #   # numeric barcode with spaces
+  #   single_pageslip = ['   Brown University', '   Gateway Services, Rockefeller Library', '   10 Prospect Street - Box A', '   Providence, RI 02912', '', '   05-27-05', '', '', '', '', '          barcod', '          name', '          BROWN UNIVERSITY', '          U LIBR-WEB SERV - BOX A', '          PROVIDENCE, RI 02912-9101', '', '', '   Please page this material and', '   forward to the circulation unit.', '', '', '   AUTHOR:  Darlington, Marwood,', '   Irish Orpheus, the life of Patrick S. Gilmore, ba', '   IMPRINT: Philadelphia, Olivier-Maney-Klein', '   PUB DATE: [1950]', '   DESC:    130 p. illus., ports. 21 cm', '   CALL NO: ML422.G48 D3', '   VOLUME:  ', '   BARCODE: 3 1236 07030 3881', '   STATUS: AVAILABLE', '   REC NO:  .i10295297', '   LOCATION: ANNEX', '   PICKUP AT: ROCK', '   OPACMSG: ', '', '', '', '', '   38']
+  #   expected = '31236070303881'
+  #   result = utility_code.parseBookBarcode( single_pageslip )
   #   self.assertEqual( expected, result, '\n- expected is: %s\n  - result is: %s' % (expected, result) )
 
-  #   # single short pageslip
-  #   # file_reference = open( 'test_files/testFile02_incorrectSciPickup.txt' )
-  #   file_reference = open( u'%s/%s' % (TEST_FILES_DIR_PATH, u'testFile02_incorrectSciPickup.txt') )
-  #   processed_data = utility_code.makeItemList( file_reference )
-  #   expected = 1   # meaning there's one page-slip in the processed_data list
-  #   result = len( processed_data )
-  #   self.assertEqual( expected, result, '\n- expected is: %s\n  - result is: %s' % (expected, result) )
-  #   expected = 35   # meaning there are 39 lines in the first (and only) page-slip
-  #   result = len( processed_data[0] )
+  #   # 'JH' barcode
+  #   single_pageslip = ['   Brown University', '   Gateway Services, Rockefeller Library', '   10 Prospect Street - Box A', '   Providence, RI 02912', '', '   Tue Nov 22 2005', '', '', '', '', '          barcode', '          name', '          BROWN UNIVERSITY', '          BOX 1234', '          PROVIDENCE, RI 02912-3198', '', '', '   Please page this material and', '   forward to the circulation unit.', '', '', '   AUTHOR:  Breggin, Peter Roger,', '   Toxic psychiatry : why therapy, empathy, and love', "   IMPRINT: New York : St. Martin's Press,", '   PUB DATE: 1991', '   DESC:    464 p. ; 24 cm', '   CALL NO: ', '   VOLUME:  ', '   BARCODE: JH16TV', '   STATUS: AVAILABLE', '   REC NO:  .i12345189', '   LOCATION: ANNEX HAY', '   PICKUP AT: Rockefeller Library', '', '', '', '', '', '   38:4']
+  #   expected = 'JH16TV'
+  #   result = utility_code.parseBookBarcode( single_pageslip )
   #   self.assertEqual( expected, result, '\n- expected is: %s\n  - result is: %s' % (expected, result) )
 
-  #   # single pageslip, no '38...'
-  #   # file_reference = open( 'test_files/testFile11_singleNo38.txt' )
-  #   file_reference = open( u'%s/%s' % (TEST_FILES_DIR_PATH, u'testFile11_singleNo38.txt') )
-  #   processed_data = utility_code.makeItemList( file_reference )
-  #   expected = 1   # meaning there's one page-slip in the processed_data list
-  #   result = len( processed_data )
-  #   self.assertEqual( expected, result, '\n- expected is: %s\n  - result is: %s' % (expected, result) )
-  #   expected = 39   # meaning there are 39 lines in the first (and only) page-slip
-  #   result = len( processed_data[0] )
-  #   self.assertEqual( expected, result, '\n- expected is: %s\n  - result is: %s' % (expected, result) )
-
-  #   # multiple pageslips
-  #   # file_reference = open( 'test_files/testFile03_itemNumberAddition.txt' )
-  #   file_reference = open( u'%s/%s' % (TEST_FILES_DIR_PATH, u'testFile03_itemNumberAddition.txt') )
-  #   processed_data = utility_code.makeItemList( file_reference )
-  #   expected = 6   # meaning there's one page-slip in the processed_data list
-  #   result = len( processed_data )
-  #   self.assertEqual( expected, result, '\n- expected is: %s\n  - result is: %s' % (expected, result) )
-  #   expected = 39   # meaning there are 39 lines in the first page-slip
-  #   result = len( processed_data[0] )
-  #   self.assertEqual( expected, result, '\n- expected is: %s\n  - result is: %s' % (expected, result) )
-
-  #   # multiple pageslips, one missing last '38...' line
-  #   # file_reference = open( 'test_files/testFile04_longNotes.txt' )
-  #   file_reference = open( u'%s/%s' % (TEST_FILES_DIR_PATH, u'testFile04_longNotes.txt') )
-  #   processed_data = utility_code.makeItemList( file_reference )
-  #   expected = 7   # meaning there's one page-slip in the processed_data list
-  #   result = len( processed_data )
-  #   self.assertEqual( expected, result, '\n- expected is: %s\n  - result is: %s' % (expected, result) )
-  #   expected = 39   # meaning there are 39 lines in the first page-slip
-  #   result = len( processed_data[0] )
-  #   self.assertEqual( expected, result, '\n- expected is: %s\n  - result is: %s' % (expected, result) )
-  #   # expected = 39   # meaning there are 39 lines in the second (weird) page-slip
-  #   # result = len( processed_data[1] )
-  #   # self.assertEqual( expected, result, '\n- expected is: %s\n  - result is: %s' % (expected, result) )
-
-  #   # multiple pageslips, first two without the usual 'Brown University' four address lines
-  #   # file_reference = open( 'test_files/testFile12_missing_brown_address.txt' )
-  #   file_reference = open( u'%s/%s' % (TEST_FILES_DIR_PATH, u'testFile12_missing_brown_address.txt') )
-  #   processed_data = utility_code.makeItemList( file_reference )
-  #   expected = 6   # this was returning 4 parsed page-slips in old code and in my new code
-  #   result = len( processed_data )
-  #   self.assertEqual( expected, result, '\n- expected is: %s\n  - result is: %s' % (expected, result) )
-
-  #   # end def test_makeItemList()
-
-
-
-  def test_parseBookBarcode(self):
-    '''input page-slip; output book-barcode'''
-
-    # numeric barcode with spaces
-    single_pageslip = ['   Brown University', '   Gateway Services, Rockefeller Library', '   10 Prospect Street - Box A', '   Providence, RI 02912', '', '   05-27-05', '', '', '', '', '          barcod', '          name', '          BROWN UNIVERSITY', '          U LIBR-WEB SERV - BOX A', '          PROVIDENCE, RI 02912-9101', '', '', '   Please page this material and', '   forward to the circulation unit.', '', '', '   AUTHOR:  Darlington, Marwood,', '   Irish Orpheus, the life of Patrick S. Gilmore, ba', '   IMPRINT: Philadelphia, Olivier-Maney-Klein', '   PUB DATE: [1950]', '   DESC:    130 p. illus., ports. 21 cm', '   CALL NO: ML422.G48 D3', '   VOLUME:  ', '   BARCODE: 3 1236 07030 3881', '   STATUS: AVAILABLE', '   REC NO:  .i10295297', '   LOCATION: ANNEX', '   PICKUP AT: ROCK', '   OPACMSG: ', '', '', '', '', '   38']
-    expected = '31236070303881'
-    result = utility_code.parseBookBarcode( single_pageslip )
-    self.assertEqual( expected, result, '\n- expected is: %s\n  - result is: %s' % (expected, result) )
-
-    # 'JH' barcode
-    single_pageslip = ['   Brown University', '   Gateway Services, Rockefeller Library', '   10 Prospect Street - Box A', '   Providence, RI 02912', '', '   Tue Nov 22 2005', '', '', '', '', '          barcode', '          name', '          BROWN UNIVERSITY', '          BOX 1234', '          PROVIDENCE, RI 02912-3198', '', '', '   Please page this material and', '   forward to the circulation unit.', '', '', '   AUTHOR:  Breggin, Peter Roger,', '   Toxic psychiatry : why therapy, empathy, and love', "   IMPRINT: New York : St. Martin's Press,", '   PUB DATE: 1991', '   DESC:    464 p. ; 24 cm', '   CALL NO: ', '   VOLUME:  ', '   BARCODE: JH16TV', '   STATUS: AVAILABLE', '   REC NO:  .i12345189', '   LOCATION: ANNEX HAY', '   PICKUP AT: Rockefeller Library', '', '', '', '', '', '   38:4']
-    expected = 'JH16TV'
-    result = utility_code.parseBookBarcode( single_pageslip )
-    self.assertEqual( expected, result, '\n- expected is: %s\n  - result is: %s' % (expected, result) )
-
-    # end def test_parseBookBarcode()
+  #   # end def test_parseBookBarcode()
 
 
 

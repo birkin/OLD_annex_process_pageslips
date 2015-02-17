@@ -129,7 +129,8 @@ for item in item_list:
   try:
     parser = utility_code.Parser()
     record_number = utility_code.parseRecordNumber(item)
-    book_barcode = utility_code.parseBookBarcode(item)
+    # book_barcode = utility_code.parseBookBarcode(item)
+    book_barcode = parser.parse_bookbarcode( item )
     las_delivery_stop = utility_code.parseJosiahPickupAtCode(item)
     las_customer_code = utility_code.parseJosiahLocationCode(item)
     patron_name = utility_code.parsePatronName(item)
@@ -137,7 +138,6 @@ for item in item_list:
     title = utility_code.parseTitle(item)
     las_date = utility_code.prepareLasDate()
     note = parser.parse_note( item )
-    # note = utility_code.parseNote(item)
     full_line = '''"%s","%s","%s","%s","%s","%s","%s","%s","%s"''' % ( record_number, book_barcode, las_delivery_stop, las_customer_code, patron_name, patron_barcode, title, las_date, note )
     new_item_list.append( full_line )
     pageslip_count = pageslip_count + 1
