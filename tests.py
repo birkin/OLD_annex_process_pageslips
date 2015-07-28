@@ -6,11 +6,11 @@ from __future__ import unicode_literals
 ## set up environment ##
 
 import os, sys
-sys.path.append( os.environ[u'AN_PR_PA__ENCLOSING_PROJECT_PATH'] )
+sys.path.append( os.environ['AN_PR_PA__ENCLOSING_PROJECT_PATH'] )
 import pprint, unittest
 from annex_process_pageslips import utility_code
 
-TEST_FILES_DIR_PATH = os.environ[u'AN_PR_PA__TEST_FILES_DIR_PATH']
+TEST_FILES_DIR_PATH = os.environ['AN_PR_PA__TEST_FILES_DIR_PATH']
 
 
 class ItemListMakerTest( unittest.TestCase ):
@@ -19,7 +19,7 @@ class ItemListMakerTest( unittest.TestCase ):
     self.item_list_maker = utility_code.ItemListMaker()
 
   def test_make_lines( self ):
-    with open( u'%s/%s' % (TEST_FILES_DIR_PATH, u'testFile04_longNotes.txt') ) as f:
+    with open( '%s/%s' % (TEST_FILES_DIR_PATH, 'testFile04_longNotes.txt') ) as f:
       text = f.read()
     lines = self.item_list_maker.make_lines( text )
     self.assertEqual(
@@ -58,50 +58,50 @@ class ItemListMakerTest( unittest.TestCase ):
   ## test make_item_list()
 
   def test_single_pageslip( self ):
-    with open( u'%s/%s' % (TEST_FILES_DIR_PATH, u'testFile01_singleEntry.txt') ) as f:
+    with open( '%s/%s' % (TEST_FILES_DIR_PATH, 'testFile01_singleEntry.txt') ) as f:
       text = f.read()
     processed_data = self.item_list_maker.make_item_list( text )
     self.assertEqual( 1, len(processed_data) )  # 1 page-slip
     self.assertEqual( 39, len(processed_data[0]) )  # 39 lines in the first (and only) page-slip
 
   def test_single_short_pageslip( self ):
-    with open( u'%s/%s' % (TEST_FILES_DIR_PATH, u'testFile02_incorrectSciPickup.txt') ) as f:
+    with open( '%s/%s' % (TEST_FILES_DIR_PATH, 'testFile02_incorrectSciPickup.txt') ) as f:
       text = f.read()
     processed_data = self.item_list_maker.make_item_list( text )
     self.assertEqual( 1, len(processed_data) )  # 1 page-slip
     self.assertEqual( 35, len(processed_data[0]) )  # lines in the first (and only) page-slip
 
   def test_single_pageslip_no38( self ):
-    with open( u'%s/%s' % (TEST_FILES_DIR_PATH, u'testFile11_singleNo38.txt') ) as f:
+    with open( '%s/%s' % (TEST_FILES_DIR_PATH, 'testFile11_singleNo38.txt') ) as f:
       text = f.read()
     processed_data = self.item_list_maker.make_item_list( text )
     self.assertEqual( 1, len(processed_data) )  # 1 page-slip
     self.assertEqual( 39, len(processed_data[0]) )  # lines in the first (and only) page-slip
 
   def test_multiple_pageslips( self ):
-    with open( u'%s/%s' % (TEST_FILES_DIR_PATH, u'testFile03_itemNumberAddition.txt') ) as f:
+    with open( '%s/%s' % (TEST_FILES_DIR_PATH, 'testFile03_itemNumberAddition.txt') ) as f:
       text = f.read()
     processed_data = self.item_list_maker.make_item_list( text )
     self.assertEqual( 6, len(processed_data) )  # page-slips
     self.assertEqual( 39, len(processed_data[0]) )  # lines
 
   def test_multiple_pageslips_one_missing_38( self ):
-    with open( u'%s/%s' % (TEST_FILES_DIR_PATH, u'testFile04_longNotes.txt') ) as f:
+    with open( '%s/%s' % (TEST_FILES_DIR_PATH, 'testFile04_longNotes.txt') ) as f:
       text = f.read()
     processed_data = self.item_list_maker.make_item_list( text )
     # pprint.pprint( processed_data )
     self.assertEqual( 7, len(processed_data) )  # page-slips
     self.assertEqual( 39, len(processed_data[0]) )  # lines
-    self.assertEqual( u'today. Thanks.', processed_data[1][-1].strip() )  # last line of second page-slip
+    self.assertEqual( 'today. Thanks.', processed_data[1][-1].strip() )  # last line of second page-slip
 
   def test_multiple_pageslips_missing_brown_university_start( self ):
-    with open( u'%s/%s' % (TEST_FILES_DIR_PATH, u'testFile12_missing_brown_address.txt') ) as f:
+    with open( '%s/%s' % (TEST_FILES_DIR_PATH, 'testFile12_missing_brown_address.txt') ) as f:
       text = f.read()
     processed_data = self.item_list_maker.make_item_list( text )
     self.assertEqual( 6, len(processed_data) )  # page-slips
 
   def test_unexpected_brown_u_string( self ):
-    with open( u'%s/%s' % (TEST_FILES_DIR_PATH, u'testFile13_BrownU_confusion.txt') ) as f:
+    with open( '%s/%s' % (TEST_FILES_DIR_PATH, 'testFile13_BrownU_confusion.txt') ) as f:
       text = f.read()
     processed_data = self.item_list_maker.make_item_list( text )
     # pprint.pprint( processed_data )
@@ -125,7 +125,7 @@ class ParserTest( unittest.TestCase ):
       '   Brown University', '   Gateway Services, Rockefeller Library', '   10 Prospect Street - Box A', '   Providence, RI 02912', '', '   05-27-05', '', '', '', '', '          barcode abc', '          name', '          BROWN UNIVERSITY', '          U LIBR-WEB SERV - BOX A', '          PROVIDENCE, RI 02912-9101', '', '', '   Please page this material and', '   forward to the circulation unit.', '', '', '   AUTHOR:  Darlington, Marwood,', '   Irish Orpheus, the life of Patrick S. Gilmore, ba', '   IMPRINT: Philadelphia, Olivier-Maney-Klein', '   PUB DATE: [1950]', '   DESC:    130 p. illus., ports. 21 cm', '   CALL NO: ML422.G48 D3', '   VOLUME:  ', '   BARCODE: 3 1236 07030 3881', '   STATUS: AVAILABLE', '   REC NO:  .i10295297', '   LOCATION: ANNEX', '   PICKUP AT: ROCK',
       '   NOTE: four score and ', '        seven years ago', '        something interesting happened', '', '', '   38' ]
     self.assertEqual(
-      u'four score and seven years ago something interesting happened',
+      'four score and seven years ago something interesting happened',
       self.parser.parse_note( single_pageslip )
       )
     ## without note
@@ -133,7 +133,7 @@ class ParserTest( unittest.TestCase ):
       '   Brown University', '   Gateway Services, Rockefeller Library', '   10 Prospect Street - Box A', '   Providence, RI 02912', '', '   05-27-05', '', '', '', '', '          barcode abc', '          name', '          BROWN UNIVERSITY', '          U LIBR-WEB SERV - BOX A', '          PROVIDENCE, RI 02912-9101', '', '', '   Please page this material and', '   forward to the circulation unit.', '', '', '   AUTHOR:  Darlington, Marwood,', '   Irish Orpheus, the life of Patrick S. Gilmore, ba', '   IMPRINT: Philadelphia, Olivier-Maney-Klein', '   PUB DATE: [1950]', '   DESC:    130 p. illus., ports. 21 cm', '   CALL NO: ML422.G48 D3', '   VOLUME:  ', '   BARCODE: 3 1236 07030 3881', '   STATUS: AVAILABLE', '   REC NO:  .i10295297', '   LOCATION: ANNEX', '   PICKUP AT: ROCK',
       '   ', '', '', '', '', '   38' ]
     self.assertEqual(
-      u'no_note',
+      'no_note',
       self.parser.parse_note( single_pageslip )
       )
     ## if note contains quotes
@@ -150,13 +150,13 @@ class ParserTest( unittest.TestCase ):
     ## numeric barcode with spaces
     single_pageslip = ['   Brown University', '   Gateway Services, Rockefeller Library', '   10 Prospect Street - Box A', '   Providence, RI 02912', '', '   05-27-05', '', '', '', '', '          barcod', '          name', '          BROWN UNIVERSITY', '          U LIBR-WEB SERV - BOX A', '          PROVIDENCE, RI 02912-9101', '', '', '   Please page this material and', '   forward to the circulation unit.', '', '', '   AUTHOR:  Darlington, Marwood,', '   Irish Orpheus, the life of Patrick S. Gilmore, ba', '   IMPRINT: Philadelphia, Olivier-Maney-Klein', '   PUB DATE: [1950]', '   DESC:    130 p. illus., ports. 21 cm', '   CALL NO: ML422.G48 D3', '   VOLUME:  ', '   BARCODE: 3 1236 07030 3881', '   STATUS: AVAILABLE', '   REC NO:  .i10295297', '   LOCATION: ANNEX', '   PICKUP AT: ROCK', '   OPACMSG: ', '', '', '', '', '   38']
     self.assertEqual(
-      u'31236070303881',
+      '31236070303881',
       self.parser.parse_bookbarcode( single_pageslip )
       )
     ## 'JH' barcode
     single_pageslip = ['   Brown University', '   Gateway Services, Rockefeller Library', '   10 Prospect Street - Box A', '   Providence, RI 02912', '', '   Tue Nov 22 2005', '', '', '', '', '          barcode', '          name', '          BROWN UNIVERSITY', '          BOX 1234', '          PROVIDENCE, RI 02912-3198', '', '', '   Please page this material and', '   forward to the circulation unit.', '', '', '   AUTHOR:  Breggin, Peter Roger,', '   Toxic psychiatry : why therapy, empathy, and love', "   IMPRINT: New York : St. Martin's Press,", '   PUB DATE: 1991', '   DESC:    464 p. ; 24 cm', '   CALL NO: ', '   VOLUME:  ', '   BARCODE: JH16TV', '   STATUS: AVAILABLE', '   REC NO:  .i12345189', '   LOCATION: ANNEX HAY', '   PICKUP AT: Rockefeller Library', '', '', '', '', '', '   38:4']
     self.assertEqual(
-      u'JH16TV',
+      'JH16TV',
       self.parser.parse_bookbarcode( single_pageslip )
       )
 
@@ -181,24 +181,24 @@ class Tester(unittest.TestCase):
   def test_convertJosiahPickupAtCode(self):
     """ Takes the josiah `pickup-at` code; returns the annex `delivery-stop` code."""
     self.assertEqual(
-      u'RO',
-      utility_code.convertJosiahPickupAtCode(u'ROCK') )
+      'RO',
+      utility_code.convertJosiahPickupAtCode('ROCK') )
     self.assertEqual(
-      u'HA',
-      utility_code.convertJosiahPickupAtCode(u'John Hay Library') )
+      'HA',
+      utility_code.convertJosiahPickupAtCode('John Hay Library') )
     self.assertEqual(
-      u'ED',
-      utility_code.convertJosiahPickupAtCode(u'Elec. Delivery (Annex Articles)') )
+      'ED',
+      utility_code.convertJosiahPickupAtCode('Elec. Delivery (Annex Articles)') )
 
 
   def test_determineCount(self):
 
-    TEST_FILES_DIR_PATH = os.environ[u'AN_PR_PA__TEST_FILES_DIR_PATH']
+    TEST_FILES_DIR_PATH = os.environ['AN_PR_PA__TEST_FILES_DIR_PATH']
 
     # single pageslip
     number_of_parsed_items = 1
     # file_reference = open( 'test_files/testFile01_singleEntry.txt' )
-    file_reference = open( u'%s/%s' % (TEST_FILES_DIR_PATH, u'testFile01_singleEntry.txt') )
+    file_reference = open( '%s/%s' % (TEST_FILES_DIR_PATH, 'testFile01_singleEntry.txt') )
     data = file_reference.read()
     lines = data.split( '\n' )
     expected = 1
@@ -208,7 +208,7 @@ class Tester(unittest.TestCase):
     # single short pageslip
     number_of_parsed_items = 5
     # file_reference = open( 'test_files/testFile02_incorrectSciPickup.txt' )
-    file_reference = open( u'%s/%s' % (TEST_FILES_DIR_PATH, u'testFile02_incorrectSciPickup.txt') )
+    file_reference = open( '%s/%s' % (TEST_FILES_DIR_PATH, 'testFile02_incorrectSciPickup.txt') )
     data = file_reference.read()
     lines = data.split( '\n' )
     expected = 5
@@ -218,7 +218,7 @@ class Tester(unittest.TestCase):
     # single pageslip, no '38...'
     number_of_parsed_items = 1
     # file_reference = open( 'test_files/testFile11_singleNo38.txt' )
-    file_reference = open( u'%s/%s' % (TEST_FILES_DIR_PATH, u'testFile11_singleNo38.txt') )
+    file_reference = open( '%s/%s' % (TEST_FILES_DIR_PATH, 'testFile11_singleNo38.txt') )
     data = file_reference.read()
     lines = data.split( '\n' )
     expected = 1
@@ -228,7 +228,7 @@ class Tester(unittest.TestCase):
     # multiple pageslips
     number_of_parsed_items = 6
     # file_reference = open( 'test_files/testFile03_itemNumberAddition.txt' )
-    file_reference = open( u'%s/%s' % (TEST_FILES_DIR_PATH, u'testFile03_itemNumberAddition.txt') )
+    file_reference = open( '%s/%s' % (TEST_FILES_DIR_PATH, 'testFile03_itemNumberAddition.txt') )
     data = file_reference.read()
     lines = data.split( '\n' )
     expected = 6
@@ -238,7 +238,7 @@ class Tester(unittest.TestCase):
     # multiple pageslips, one missing last '38...' line
     number_of_parsed_items = 7
     # file_reference = open( 'test_files/testFile04_longNotes.txt' )
-    file_reference = open( u'%s/%s' % (TEST_FILES_DIR_PATH, u'testFile04_longNotes.txt') )
+    file_reference = open( '%s/%s' % (TEST_FILES_DIR_PATH, 'testFile04_longNotes.txt') )
     data = file_reference.read()
     lines = data.split( '\n' )
     expected = 7
@@ -248,7 +248,7 @@ class Tester(unittest.TestCase):
     # multiple pageslips, first two without the usual 'Brown University' four address lines
     number_of_parsed_items = 6
     # file_reference = open( 'test_files/testFile12_missing_brown_address.txt' )
-    file_reference = open( u'%s/%s' % (TEST_FILES_DIR_PATH, u'testFile12_missing_brown_address.txt') )
+    file_reference = open( '%s/%s' % (TEST_FILES_DIR_PATH, 'testFile12_missing_brown_address.txt') )
     data = file_reference.read()
     lines = data.split( '\n' )
     expected = 6
@@ -305,13 +305,13 @@ class Tester(unittest.TestCase):
     """ Takes lines list, returns josiah `pickup-at` code (the annex `delivery-stop` code). """
     # 'PICKUP AT: ROCK'
     lines = ['   Brown University', '   Gateway Services, Rockefeller Library', '   10 Prospect Street - Box A', '   Providence, RI 02912', '', '   05-27-05', '', '', '', '', '          barcod', '          name', '          BROWN UNIVERSITY', '          U LIBR-WEB SERV - BOX A', '          PROVIDENCE, RI 02912-9101', '', '', '   Please page this material and', '   forward to the circulation unit.', '', '', '   AUTHOR:  Darlington, Marwood,', '   Irish Orpheus, the life of Patrick S. Gilmore, ba', '   IMPRINT: Philadelphia, Olivier-Maney-Klein', '   PUB DATE: [1950]', '   DESC:    130 p. illus., ports. 21 cm', '   CALL NO: ML422.G48 D3', '   VOLUME:  ', '   BARCODE: 3 1236 07030 3881', '   STATUS: AVAILABLE', '   REC NO:  .i10295297', '   LOCATION: ANNEX', '   PICKUP AT: ROCK', '   OPACMSG: ', '', '', '', '', '   38']
-    self.assertEqual( u'RO', utility_code.parseJosiahPickupAtCode(lines) )
+    self.assertEqual( 'RO', utility_code.parseJosiahPickupAtCode(lines) )
     # 'PICKUP AT: Elec. Delivery (Annex Articles)'
     lines = ['   Brown University', '   Gateway Services, Rockefeller Library', '   10 Prospect Street - Box A', '   Providence, RI 02912', '', '   Mon Jan 26 2015', '', '', '', '', '          2 1236 00801 6417', '          KYLE DAVID GION', '          BROWN UNIVERSITY', '          BOX 2851', '          PROVIDENCE, RI 02912-2851', '', '', '   Please page this material and', '   forward to the circulation unit.', '', '', '   AUTHOR:', '   Journal of social and personal relationships', '   IMPRINT: London : Sage Publications,', '   PUB DATE: c1984-', '   DESC:    v. ; 22 cm', '   CALL NO: HM132 .J86x 14 (1997)', '   VOLUME:  14 (1997)', '   BARCODE: 3 1236 09014 6286', '   STATUS: AVAILABLE', '   REC NO:  .i11901707', '   LOCATION: ANNEX', '   PICKUP AT: Elec. Delivery (Annex Articles)', '', '', '', '', '', '   38:16']
-    self.assertEqual( u'ED', utility_code.parseJosiahPickupAtCode(lines) )
+    self.assertEqual( 'ED', utility_code.parseJosiahPickupAtCode(lines) )
     # 'PICKUP AT:'
     lines = ['   Brown University', '   Gateway Services, Rockefeller Library', '   10 Prospect Street - Box A', '   Providence, RI 02912', '', '   Tue Nov 22 2005', '', '', '', '', '          1 1234 12345 1234', '          name', '          BROWN UNIVERSITY', '          BOX 1234', '          PROVIDENCE, RI 02912-3198', '', '', '   Please page this material and', '   forward to the circulation unit.', '', '', '   AUTHOR:  Breggin, Peter Roger,', '   Toxic psychiatry : why therapy, empathy, and love', "   IMPRINT: New York : St. Martin's Press,\n", '   PUB DATE: 1991', '   DESC:    464 p. ; 24 cm', '   CALL NO: ', '   VOLUME:  ', '   BARCODE: JH16TV', '   STATUS: AVAILABLE', '   REC NO:  .i12345189', '   LOCATION: ANNEX', '   PICKUP AT:', '', '', '', '', '', '   38:4']
-    self.assertEqual( u'?', utility_code.parseJosiahPickupAtCode(lines) )
+    self.assertEqual( '?', utility_code.parseJosiahPickupAtCode(lines) )
 
 
   # def test_parseNote(self):

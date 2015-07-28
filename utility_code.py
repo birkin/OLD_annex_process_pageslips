@@ -11,7 +11,7 @@ class ItemListMaker( object ):
   def __init__( self ):
     self.items = []
     self.item = []
-    self.last_line = u''
+    self.last_line = ''
 
   def make_item_list( self, text ):
     """ Turns utf8-text into list of requests, where each request is a list of lines. """
@@ -30,15 +30,15 @@ class ItemListMaker( object ):
     """ Turns text into lines.
         Called by make_item_list() """
     assert type(text) == str
-    unicode_text = text.decode( u'utf-8' )
-    lines = unicode_text.split( u'\n' )
+    unicode_text = text.decode( 'utf-8' )
+    lines = unicode_text.split( '\n' )
     return lines
 
   def check_start( self, line ):
     """ Determines if line is beginning of an item.
         Called by make_item_list() """
-    # print u'- len(self.item), %s' % len(self.item)
-    if (u'Brown University' in line) and (u'AUTHOR' not in line) and (u'AUTHOR' not in self.last_line):
+    # print '- len(self.item), %s' % len(self.item)
+    if ('Brown University' in line) and ('AUTHOR' not in line) and ('AUTHOR' not in self.last_line):
       return True
     elif line.strip()[0:3] in [ 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun' ] and len(self.item) < 1:
       return True
@@ -50,7 +50,7 @@ class ItemListMaker( object ):
   def conditionally_append_line_to_item( self, line ):
     """ Appends line to item if it's not a blank start to a new item.
         Called by make_item_list() """
-    if len(self.item) == 0 and line.strip() == u'':
+    if len(self.item) == 0 and line.strip() == '':
       pass
     else:
       self.item.append( line )  # adds line to existing or new item
@@ -74,7 +74,7 @@ class ItemListMaker( object ):
     new_item = []
     check_flag = True
     for line in item:
-      if line.strip() == u'' and check_flag == True:  # doesn't copy empty line
+      if line.strip() == '' and check_flag == True:  # doesn't copy empty line
         pass
       else:  # otherwise, copies and stops checking, since the trailing empty lines have been removed
         check_flag = False
@@ -99,37 +99,37 @@ class Parser( object ):
   def grab_note( self, pageslip_lines ):
     """ Grabs initial note string.
         Called by parse_note() """
-    note = u''
-    ready_flag = u'red'
+    note = ''
+    ready_flag = 'red'
     for line in pageslip_lines:
-      if u'PICKUP AT:' in line:
-        ready_flag = u'yellow'
-      elif u'NOTE:' in line and ready_flag == u'yellow':
-        ready_flag = u'green'
-        note = line.replace( u'NOTE:', u'' ).strip()
-      elif ready_flag == u'green' and len( line.strip() ) > 0 and u'38' not in line:
-        note = note + u' ' + line.strip()
+      if 'PICKUP AT:' in line:
+        ready_flag = 'yellow'
+      elif 'NOTE:' in line and ready_flag == 'yellow':
+        ready_flag = 'green'
+        note = line.replace( 'NOTE:', '' ).strip()
+      elif ready_flag == 'green' and len( line.strip() ) > 0 and '38' not in line:
+        note = note + ' ' + line.strip()
     return note
 
   def clean_note( self, initial_note ):
     """ Removes spaces from note, or sets default note.
         Called by parse_note() """
-    cleaned_note = initial_note.replace( u'  ', u' ' )
-    cleaned_note = cleaned_note.replace( u'"', u"'" )
+    cleaned_note = initial_note.replace( '  ', ' ' )
+    cleaned_note = cleaned_note.replace( '"', u"'" )
     if len( cleaned_note.strip() ) == 0:
-      cleaned_note = u'no_note'
+      cleaned_note = 'no_note'
     return cleaned_note
 
   def parse_bookbarcode( self, single_page_slip ):
     """ Parses book-barcode from lines of a single pageslip.
         Called by controller.py """
-    book_barcode = u'init'
+    book_barcode = 'init'
     for line in single_page_slip:
       stripped_line = line.strip()
-      if u'BARCODE:' in stripped_line:
+      if 'BARCODE:' in stripped_line:
         temp_string = stripped_line[8:]   # gets everything after 'BARCODE:'
         temp_string = temp_string.strip()   # removes outside whitespace, leaving barcode possibly containing space-characters
-        return_val = temp_string.replace( u' ', u'' )
+        return_val = temp_string.replace( ' ', '' )
         break
     return return_val
 
@@ -174,9 +174,9 @@ def convertJosiahLocationCode( code ):
   - Called by: utility_code.parseJosiahLocationCode()
   '''
 
-  JOSIAH_LOCATION_TO_LAS_CUSTOMER_CODE_CONVERTER_API_URL_PREFIX = os.environ[u'AN_PR_PA__JOSIAH_LOCATION_TO_LAS_CUSTOMER_CODE_CONVERTER_API_URL_PREFIX']
+  JOSIAH_LOCATION_TO_LAS_CUSTOMER_CODE_CONVERTER_API_URL_PREFIX = os.environ['AN_PR_PA__JOSIAH_LOCATION_TO_LAS_CUSTOMER_CODE_CONVERTER_API_URL_PREFIX']
 
-  full_url = u'%s%s' % ( JOSIAH_LOCATION_TO_LAS_CUSTOMER_CODE_CONVERTER_API_URL_PREFIX, urllib.quote(code) )
+  full_url = '%s%s' % ( JOSIAH_LOCATION_TO_LAS_CUSTOMER_CODE_CONVERTER_API_URL_PREFIX, urllib.quote(code) )
 
   try:
     string_data = urllib.urlopen( full_url ).read()
@@ -197,9 +197,9 @@ def convertJosiahPickupAtCode( code ):
   - Called by: utility_code.parseJosiahPickupAtCode()
   '''
 
-  JOSIAH_PICKUP_AT_TO_LAS_DELIVERY_STOP_CONVERTER_API_URL_PREFIX = os.environ[u'AN_PR_PA__JOSIAH_PICKUP_AT_TO_LAS_DELIVERY_STOP_CONVERTER_API_URL_PREFIX']
+  JOSIAH_PICKUP_AT_TO_LAS_DELIVERY_STOP_CONVERTER_API_URL_PREFIX = os.environ['AN_PR_PA__JOSIAH_PICKUP_AT_TO_LAS_DELIVERY_STOP_CONVERTER_API_URL_PREFIX']
 
-  full_url = u'%s%s' % ( JOSIAH_PICKUP_AT_TO_LAS_DELIVERY_STOP_CONVERTER_API_URL_PREFIX, urllib.quote(code) )
+  full_url = '%s%s' % ( JOSIAH_PICKUP_AT_TO_LAS_DELIVERY_STOP_CONVERTER_API_URL_PREFIX, urllib.quote(code) )
 
   try:
     string_data = urllib.urlopen( full_url ).read()
@@ -417,8 +417,8 @@ def postFileData( identifier, file_data, update_type ):
   - Called by: opac_to_las_python_parser_code.controller
   '''
 
-  ADMIN_LOG_URL = os.environ[u'AN_PR_PA__ADMIN_LOG_URL']
-  ADMIN_LOG_KEY = os.environ[u'AN_PR_PA__ADMIN_LOG_KEY']
+  ADMIN_LOG_URL = os.environ['AN_PR_PA__ADMIN_LOG_URL']
+  ADMIN_LOG_KEY = os.environ['AN_PR_PA__ADMIN_LOG_KEY']
 
   if update_type == 'original_file':
     values = {
@@ -483,9 +483,9 @@ def updateLog( message, message_importance='low', identifier='' ):
   - Purpose: update web-accessible log.
   '''
 
-  LOG_ENTRY_MINIMUM_IMPORTANCE_LEVEL = os.environ[u'AN_PR_PA__LOG_ENTRY_MINIMUM_IMPORTANCE_LEVEL']
-  LOG_KEY = os.environ[u'AN_PR_PA__LOG_KEY']
-  LOG_URL = os.environ[u'AN_PR_PA__LOG_URL']
+  LOG_ENTRY_MINIMUM_IMPORTANCE_LEVEL = os.environ['AN_PR_PA__LOG_ENTRY_MINIMUM_IMPORTANCE_LEVEL']
+  LOG_KEY = os.environ['AN_PR_PA__LOG_KEY']
+  LOG_URL = os.environ['AN_PR_PA__LOG_URL']
 
   update_log_flag = 'init'
 
