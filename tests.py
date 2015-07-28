@@ -2,12 +2,28 @@
 
 from __future__ import unicode_literals
 
+import logging, os, pprint, sys, unittest
+
+
+## settings from env/activate
+LOG_PATH = os.environ['AN_PR_PA__LOG_PATH']
+LOG_LEVEL = os.environ['AN_PR_PA__LOG_LEVEL']  # 'DEBUG' or 'INFO'
+
+
+## logging
+log_level = { 'DEBUG': logging.DEBUG, 'INFO': logging.INFO }
+logging.basicConfig(
+    filename=LOG_PATH, level=log_level[LOG_LEVEL],
+    format='[%(asctime)s] %(levelname)s [%(module)s-%(funcName)s()::%(lineno)d] %(message)s',
+    datefmt='%d/%b/%Y %H:%M:%S'
+    )
+logger = logging.getLogger(__name__)
+logger.debug( 'log setup' )
+
 
 ## set up environment ##
 
-import os, sys
 sys.path.append( os.environ['AN_PR_PA__ENCLOSING_PROJECT_PATH'] )
-import pprint, unittest
 from annex_process_pageslips import utility_code
 
 TEST_FILES_DIR_PATH = os.environ['AN_PR_PA__TEST_FILES_DIR_PATH']
