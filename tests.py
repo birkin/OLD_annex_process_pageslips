@@ -182,9 +182,7 @@ class ParserTest( unittest.TestCase ):
   # end class ParserTest()
 
 
-
-class Tester(unittest.TestCase):
-
+class MiscellaneousFunctionTester(unittest.TestCase):
 
   def test_convertJosiahLocationCode(self):
     '''input page-slip; output Annex customer-code (josiah 'location-code')'''
@@ -195,7 +193,6 @@ class Tester(unittest.TestCase):
     self.assertEqual( expected, result, '\n- expected is: %s\n  - result is: %s' % (expected, result) )
 
     # end def test_convertJosiahLocationCode()
-
 
   def test_convertJosiahPickupAtCode(self):
     """ Takes the josiah `pickup-at` code; returns the annex `delivery-stop` code."""
@@ -208,7 +205,6 @@ class Tester(unittest.TestCase):
     self.assertEqual(
       'ED',
       utility_code.convertJosiahPickupAtCode('Elec. Delivery (Annex Articles)') )
-
 
   def test_determineCount(self):
 
@@ -276,27 +272,6 @@ class Tester(unittest.TestCase):
 
     # end def test_determineCount()
 
-
-
-  # def test_parseBookBarcode(self):
-  #   '''input page-slip; output book-barcode'''
-
-  #   # numeric barcode with spaces
-  #   single_pageslip = ['   Brown University', '   Gateway Services, Rockefeller Library', '   10 Prospect Street - Box A', '   Providence, RI 02912', '', '   05-27-05', '', '', '', '', '          barcod', '          name', '          BROWN UNIVERSITY', '          U LIBR-WEB SERV - BOX A', '          PROVIDENCE, RI 02912-9101', '', '', '   Please page this material and', '   forward to the circulation unit.', '', '', '   AUTHOR:  Darlington, Marwood,', '   Irish Orpheus, the life of Patrick S. Gilmore, ba', '   IMPRINT: Philadelphia, Olivier-Maney-Klein', '   PUB DATE: [1950]', '   DESC:    130 p. illus., ports. 21 cm', '   CALL NO: ML422.G48 D3', '   VOLUME:  ', '   BARCODE: 3 1236 07030 3881', '   STATUS: AVAILABLE', '   REC NO:  .i10295297', '   LOCATION: ANNEX', '   PICKUP AT: ROCK', '   OPACMSG: ', '', '', '', '', '   38']
-  #   expected = '31236070303881'
-  #   result = utility_code.parseBookBarcode( single_pageslip )
-  #   self.assertEqual( expected, result, '\n- expected is: %s\n  - result is: %s' % (expected, result) )
-
-  #   # 'JH' barcode
-  #   single_pageslip = ['   Brown University', '   Gateway Services, Rockefeller Library', '   10 Prospect Street - Box A', '   Providence, RI 02912', '', '   Tue Nov 22 2005', '', '', '', '', '          barcode', '          name', '          BROWN UNIVERSITY', '          BOX 1234', '          PROVIDENCE, RI 02912-3198', '', '', '   Please page this material and', '   forward to the circulation unit.', '', '', '   AUTHOR:  Breggin, Peter Roger,', '   Toxic psychiatry : why therapy, empathy, and love', "   IMPRINT: New York : St. Martin's Press,", '   PUB DATE: 1991', '   DESC:    464 p. ; 24 cm', '   CALL NO: ', '   VOLUME:  ', '   BARCODE: JH16TV', '   STATUS: AVAILABLE', '   REC NO:  .i12345189', '   LOCATION: ANNEX HAY', '   PICKUP AT: Rockefeller Library', '', '', '', '', '', '   38:4']
-  #   expected = 'JH16TV'
-  #   result = utility_code.parseBookBarcode( single_pageslip )
-  #   self.assertEqual( expected, result, '\n- expected is: %s\n  - result is: %s' % (expected, result) )
-
-  #   # end def test_parseBookBarcode()
-
-
-
   def test_parseJosiahLocationCode(self):
     '''input page-slip; output Josiah location code (annex 'customer_code')'''
 
@@ -319,7 +294,6 @@ class Tester(unittest.TestCase):
     self.assertEqual( expected, result, '\n- expected is: %s\n  - result is: %s' % (expected, result) )
     # end def test_parseJosiahLocationCode()
 
-
   def test_parseJosiahPickupAtCode(self):
     """ Takes lines list, returns josiah `pickup-at` code (the annex `delivery-stop` code). """
     # 'PICKUP AT: ROCK'
@@ -331,32 +305,6 @@ class Tester(unittest.TestCase):
     # 'PICKUP AT:'
     lines = ['   Brown University', '   Gateway Services, Rockefeller Library', '   10 Prospect Street - Box A', '   Providence, RI 02912', '', '   Tue Nov 22 2005', '', '', '', '', '          1 1234 12345 1234', '          name', '          BROWN UNIVERSITY', '          BOX 1234', '          PROVIDENCE, RI 02912-3198', '', '', '   Please page this material and', '   forward to the circulation unit.', '', '', '   AUTHOR:  Breggin, Peter Roger,', '   Toxic psychiatry : why therapy, empathy, and love', "   IMPRINT: New York : St. Martin's Press,\n", '   PUB DATE: 1991', '   DESC:    464 p. ; 24 cm', '   CALL NO: ', '   VOLUME:  ', '   BARCODE: JH16TV', '   STATUS: AVAILABLE', '   REC NO:  .i12345189', '   LOCATION: ANNEX', '   PICKUP AT:', '', '', '', '', '', '   38:4']
     self.assertEqual( '?', utility_code.parseJosiahPickupAtCode(lines) )
-
-
-  # def test_parseNote(self):
-  #   '''input: pageslip, output: note string'''
-
-  #   # with note
-  #   single_pageslip = ['   Brown University', '   Gateway Services, Rockefeller Library', '   10 Prospect Street - Box A', '   Providence, RI 02912', '', '   05-27-05', '', '', '', '', '          barcode abc', '          name', '          BROWN UNIVERSITY', '          U LIBR-WEB SERV - BOX A', '          PROVIDENCE, RI 02912-9101', '', '', '   Please page this material and', '   forward to the circulation unit.', '', '', '   AUTHOR:  Darlington, Marwood,', '   Irish Orpheus, the life of Patrick S. Gilmore, ba', '   IMPRINT: Philadelphia, Olivier-Maney-Klein', '   PUB DATE: [1950]', '   DESC:    130 p. illus., ports. 21 cm', '   CALL NO: ML422.G48 D3', '   VOLUME:  ', '   BARCODE: 3 1236 07030 3881', '   STATUS: AVAILABLE', '   REC NO:  .i10295297', '   LOCATION: ANNEX', '   PICKUP AT: ROCK', '   NOTE: four score and ', '        seven years ago', '        something interesting happened', '', '', '   38']
-  #   expected = 'four score and seven years ago something interesting happened'
-  #   result = utility_code.parseNote( single_pageslip )
-  #   self.assertEqual( expected, result, '\n- expected is: %s\n  - result is: %s' % (expected, result) )
-
-  #   # without note
-  #   single_pageslip = ['   Brown University', '   Gateway Services, Rockefeller Library', '   10 Prospect Street - Box A', '   Providence, RI 02912', '', '   05-27-05', '', '', '', '', '          barcode abc', '          name', '          BROWN UNIVERSITY', '          U LIBR-WEB SERV - BOX A', '          PROVIDENCE, RI 02912-9101', '', '', '   Please page this material and', '   forward to the circulation unit.', '', '', '   AUTHOR:  Darlington, Marwood,', '   Irish Orpheus, the life of Patrick S. Gilmore, ba', '   IMPRINT: Philadelphia, Olivier-Maney-Klein', '   PUB DATE: [1950]', '   DESC:    130 p. illus., ports. 21 cm', '   CALL NO: ML422.G48 D3', '   VOLUME:  ', '   BARCODE: 3 1236 07030 3881', '   STATUS: AVAILABLE', '   REC NO:  .i10295297', '   LOCATION: ANNEX', '   PICKUP AT: ROCK', '   ', '', '', '', '', '   38']
-  #   expected = '?'
-  #   result = utility_code.parseNote( single_pageslip )
-  #   self.assertEqual( expected, result, '\n- expected is: %s\n  - result is: %s' % (expected, result) )
-
-  #   # if note contains quotes
-  #   single_pageslip = ['   Brown University', '   Gateway Services, Rockefeller Library', '   10 Prospect Street - Box A', '   Providence, RI 02912', '', '   05-27-05', '', '', '', '', '          barcode abc', '          name', '          BROWN UNIVERSITY', '          U LIBR-WEB SERV - BOX A', '          PROVIDENCE, RI 02912-9101', '', '', '   Please page this material and', '   forward to the circulation unit.', '', '', '   AUTHOR:  Darlington, Marwood,', '   Irish Orpheus, the life of Patrick S. Gilmore, ba', '   IMPRINT: Philadelphia, Olivier-Maney-Klein', '   PUB DATE: [1950]', '   DESC:    130 p. illus., ports. 21 cm', '   CALL NO: ML422.G48 D3', '   VOLUME:  ', '   BARCODE: 3 1236 07030 3881', '   STATUS: AVAILABLE', '   REC NO:  .i10295297', '   LOCATION: ANNEX', '   PICKUP AT: ROCK', '   NOTE: four score and ', '        seven years ago', '        something "interesting" happened', '', '', '   38']
-  #   expected = "four score and seven years ago something 'interesting' happened"
-  #   result = utility_code.parseNote( single_pageslip )
-  #   self.assertEqual( expected, result, '\n- expected is: %s\n  - result is: %s' % (expected, result) )
-
-  #   # end def test_parseNote()
-
-
 
   def test_parsePatronBarcode(self):
     '''input pageslip lines; output item barcode'''
@@ -374,8 +322,6 @@ class Tester(unittest.TestCase):
 
     # end def test_parsePatronBarcode()
 
-
-
   def test_parsePatronName(self):
     '''input pageslip lines; output patron name'''
 
@@ -385,8 +331,6 @@ class Tester(unittest.TestCase):
     self.assertEqual( expected, result, '\n- expected is: %s\n  - result is: %s' % (expected, result) )
 
     # end def test_parsePatronName()
-
-
 
   def test_parseRecordNumber(self):
     '''input page-slip; output record-number'''
@@ -398,8 +342,6 @@ class Tester(unittest.TestCase):
     self.assertEqual( expected, result, '\n- expected is: %s\n  - result is: %s' % (expected, result) )
 
     # end def test_parseRecordNumber()
-
-
 
   def test_parseTitle(self):
     '''input pageslip lines; output item title'''
@@ -424,8 +366,6 @@ class Tester(unittest.TestCase):
 
     # end def test_parseTitle()
 
-
-
   def test_prepareDateTimeStamp(self):
     '''sending a known time to check formatting'''
 
@@ -442,8 +382,6 @@ class Tester(unittest.TestCase):
     self.assertEqual( expected, result, '\n- expected is: %s\n  - result is: %s' % (expected, result) )
 
     # end def test_prepareDateTimeStamp()
-
-
 
   def test_prepareLasDate(self):
     '''sending a known time to check formatting'''
@@ -464,14 +402,9 @@ class Tester(unittest.TestCase):
 
     # end def test_prepareLasDate()
 
-
-  # end class Tester()
+  # end class MiscellaneousFunctionTester
 
 
 
 if __name__ == "__main__":
   unittest.main()
-
-
-
-# bottom
