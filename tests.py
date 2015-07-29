@@ -73,6 +73,16 @@ class ItemListMakerTest( unittest.TestCase ):
 
   ## test make_item_list()
 
+
+
+  def test_CURRENT_PROBLEM( self ):
+    with open( '%s/%s' % (TEST_FILES_DIR_PATH, 'testFile14_BrownU_title_confusion.txt') ) as f:
+      text = f.read()
+    processed_data = self.item_list_maker.make_item_list( text )
+    self.assertEqual( 5, len(processed_data) )  # 5 page-slips
+
+
+
   def test_single_pageslip( self ):
     with open( '%s/%s' % (TEST_FILES_DIR_PATH, 'testFile01_singleEntry.txt') ) as f:
       text = f.read()
@@ -117,7 +127,7 @@ class ItemListMakerTest( unittest.TestCase ):
     self.assertEqual( 6, len(processed_data) )  # page-slips
 
   def test_unexpected_brown_u_string( self ):
-    with open( '%s/%s' % (TEST_FILES_DIR_PATH, 'testFile13_BrownU_confusion.txt') ) as f:
+    with open( '%s/%s' % (TEST_FILES_DIR_PATH, 'testFile13_BrownU_auth_confusion.txt') ) as f:
       text = f.read()
     processed_data = self.item_list_maker.make_item_list( text )
     # pprint.pprint( processed_data )

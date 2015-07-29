@@ -2,7 +2,10 @@
 
 from __future__ import unicode_literals
 
-import datetime, json, os, pprint, urllib, urllib2
+import datetime, json, logging, os, pprint, urllib, urllib2
+
+
+logger = logging.getLogger(__name__)
 
 
 class ItemListMaker( object ):
@@ -24,6 +27,7 @@ class ItemListMaker( object ):
       self.last_line = line
     self.items.append( self.item )  # adds last item
     self.clean_items()
+    logger.debug( 'items, `%s`' % pprint.pformat( self.items) )
     return self.items
 
   def make_lines( self, text ):
@@ -37,15 +41,35 @@ class ItemListMaker( object ):
   def check_start( self, line ):
     """ Determines if line is beginning of an item.
         Called by make_item_list() """
-    # print '- len(self.item), %s' % len(self.item)
-    if ('Brown University' in line) and ('AUTHOR' not in line) and ('AUTHOR' not in self.last_line):
-      return True
+    # logger.debug( 'len(self.item-s), `%s`' % len(self.items) )
+    # logger.debug( 'len(self.item), `%s`' % len(self.item) )
+    # logger.debug( 'line, `%s`' % line )
+    line = line.strip()
+    return_val = False
+    if (line in ['Brown University', 'Brown University Library' ]) and ('AUTHOR' not in line) and ('AUTHOR' not in self.last_line):
+      return_val = True
     elif line.strip()[0:3] in [ 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun' ] and len(self.item) < 1:
-      return True
+      return_val = True
     elif len(self.item) > 1 and self.item[-1].strip()[0:4] in [ '38:1', '38:2', '38:3', '38:4', '38:5', '38:6', '38:7', '38:8', '38:9', '38:0' ]:
-      return True
-    else:
-      return False
+      return_val = True
+    logger.debug( 'return_val, `%s`' % return_val )
+    return return_val
+
+  # def check_start( self, line ):
+  #   """ Determines if line is beginning of an item.
+  #       Called by make_item_list() """
+  #   logger.debug( 'len(self.item-s), `%s`' % len(self.items) )
+  #   logger.debug( 'len(self.item), `%s`' % len(self.item) )
+  #   logger.debug( 'line, `%s`' % line )
+  #   return_val = False
+  #   if ('Brown University' in line) and ('AUTHOR' not in line) and ('AUTHOR' not in self.last_line):
+  #     return_val = True
+  #   elif line.strip()[0:3] in [ 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun' ] and len(self.item) < 1:
+  #     return_val = True
+  #   elif len(self.item) > 1 and self.item[-1].strip()[0:4] in [ '38:1', '38:2', '38:3', '38:4', '38:5', '38:6', '38:7', '38:8', '38:9', '38:0' ]:
+  #     return_val = True
+  #   logger.debug( 'return_val, `%s`' % return_val )
+  #   return return_val
 
   def conditionally_append_line_to_item( self, line ):
     """ Appends line to item if it's not a blank start to a new item.
