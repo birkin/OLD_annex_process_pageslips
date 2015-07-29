@@ -5,10 +5,12 @@ from __future__ import unicode_literals
 
 ## set up environment ##
 
-import os, sys
+import datetime, os, shutil, smtplib, string, sys
+from email.Header import Header
+from email.mime.text import MIMEText
 sys.path.append( os.environ['AN_PR_PA__ENCLOSING_PROJECT_PATH'] )
-import datetime, shutil, string
 from annex_process_pageslips import utility_code
+from annex_process_pageslips.utility_code import Mailer
 
 PATH_TO_ARCHIVES_ORIGINALS_DIRECTORY = os.environ['AN_PR_PA__PATH_TO_ARCHIVES_ORIGINALS_DIRECTORY']
 PATH_TO_ARCHIVES_PARSED_DIRECTORY = os.environ['AN_PR_PA__PATH_TO_ARCHIVES_PARSED_DIRECTORY']
@@ -70,14 +72,14 @@ try:
 except Exception, e:
   message = '- copy of original file from "%s" to "%s" unsuccessful; exception is: %s' % ( PATH_TO_SOURCE_FILE, original_archive_file_path, e )
   utility_code.updateLog( message=message, message_importance='high' )
-  sys.exist( message )
+  sys.exit( message )
 copy_check = utility_code.checkFileExistence( original_archive_file_path )
 if copy_check == 'exists':
   utility_code.updateLog( message='- original file copied to: %s' % original_archive_file_path )
 else:
   message = '- copy of original file from "%s" to "%s" unsuccessful; exception is: %s' % ( PATH_TO_SOURCE_FILE, original_archive_file_path, copy_check )
   utility_code.updateLog( message=message, message_importance='high' )
-  sys.exist( message )
+  sys.exit( message )
 
 
 
@@ -148,7 +150,12 @@ for item in item_list:
       utility_code.updateLog( message='- %s pageslips processed so far...' % pageslip_count )
       # print '.'
   except Exception, e:
-    utility_code.updateLog( message='- iterating through item_list; problem with item "%s"; exception is: %s' % (item, e), message_importance='high' )
+    subject = 'annex process pageslips problem'
+    message = 'iterating through item_list; problem with item "%s"; exception is: %s' % ( item, unicode(repr(e)) )
+    logger.error( message )
+    m = Mailer( subject, message )
+    m.send_email()
+    utility_code.updateLog( message='- iterating through item_list; problem with item "%s"; exception is: %s' % (item, unicode(repr(e))), message_importance='high' )
 utility_code.updateLog( message='- %s items parsed' % pageslip_count )
 
 
@@ -273,13 +280,13 @@ try:
   if copy_check == 'exists':
     message = '- delete of original file at "%s" failed, as determined by copy_check' % PATH_TO_SOURCE_FILE
     utility_code.updateLog( message=message, message_importance='high' )
-    sys.exist( message )
+    sys.exit( message )
   else:
     utility_code.updateLog( message='- source file at "%s" deleted' % PATH_TO_SOURCE_FILE )
 except Exception, e:
   message = '- delete of original file at "%s" failed; exception is: %s' % ( PATH_TO_SOURCE_FILE, e )
   utility_code.updateLog( message=message, message_importance='high' )
-  sys.exist( message )
+  sys.exit( message )
 
 
 ## report end of script
