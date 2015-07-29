@@ -207,8 +207,11 @@ def convertJosiahLocationCode( code ):
     result = json_data['result']['returned_las_code']
     return result
   except Exception, e:
-    updateLog( message='- in convertJosiahLocationCode(); exception is: %s' % e )
-    return 'failure'
+    message = 'problem coverting josiah-location-code, `%s`' % code
+    logger.debug( message )
+    logger.error( 'exception, `%s`' % unicode(repr(e)) )
+    updateLog( message='- in convertJosiahLocationCode(); %s' % message )
+    return 'unknown_location'
 
   # end def convertJosiahLocationCode()
 
