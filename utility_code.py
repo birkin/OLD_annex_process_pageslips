@@ -244,28 +244,6 @@ def determineCount( number_of_parsed_items, pageslip_lines ):
 
 
 
-# def parseBookBarcode( single_page_slip ):
-#   '''
-#   - Purpose: to extract a book-barcode from a page-slip.
-#   - Called by: opac_to_las_python_parser_code.controller
-#   '''
-
-#   book_barcode = 'init'
-#   for line in single_page_slip:
-#     stripped_line = line.strip()
-#     if 'BARCODE:' in stripped_line:
-#       temp_string = stripped_line[8:]   # gets everything after 'BARCODE:'
-#       temp_string = temp_string.strip()   # removes outside whitespace, leaving barcode possibly containing space-characters
-#       # print '- temp_string is: %s' % temp_string
-#       return_val = temp_string.replace( ' ', '' )
-#       break
-
-#   return return_val
-
-#   # end def parseBookBarcode()
-
-
-
 def parseJosiahLocationCode( single_page_slip ):
   '''
   - Purpose: to extract an las 'customer-code' from a page-slip's josiah 'location-code'.
