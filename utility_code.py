@@ -91,55 +91,73 @@ class ItemListMaker( object ):
 
 
 class Parser( object ):
-  """ Parses data-fields from a single pageslip's lines.
+    """ Parses data-fields from a single pageslip's lines.
       TODO: refactor rest of parsing functions into here. """
 
-  def parse_note( self, pageslip_lines ):
-    """ Extracts possible note from lines of a single pageslip.
-        Called by controller.py """
-    initial_note = self.grab_note( pageslip_lines )
-    cleaned_note = self.clean_note( initial_note )
-    return cleaned_note
+    def parse_note( self, pageslip_lines ):
+        """ Extracts possible note from lines of a single pageslip.
+            Called by controller.py """
+        initial_note = self.grab_note( pageslip_lines )
+        cleaned_note = self.clean_note( initial_note )
+        return cleaned_note
 
-  def grab_note( self, pageslip_lines ):
-    """ Grabs initial note string.
-        Called by parse_note() """
-    note = ''
-    ready_flag = 'red'
-    for line in pageslip_lines:
-      if 'PICKUP AT:' in line:
-        ready_flag = 'yellow'
-      elif 'NOTE:' in line and ready_flag == 'yellow':
-        ready_flag = 'green'
-        note = line.replace( 'NOTE:', '' ).strip()
-      elif ready_flag == 'green' and len( line.strip() ) > 0 and '38' not in line:
-        note = note + ' ' + line.strip()
-    return note
+    def grab_note( self, pageslip_lines ):
+        """ Grabs initial note string.
+            Called by parse_note() """
+        note = ''
+        ready_flag = 'red'
+        for line in pageslip_lines:
+          if 'PICKUP AT:' in line:
+            ready_flag = 'yellow'
+          elif 'NOTE:' in line and ready_flag == 'yellow':
+            ready_flag = 'green'
+            note = line.replace( 'NOTE:', '' ).strip()
+          elif ready_flag == 'green' and len( line.strip() ) > 0 and '38' not in line:
+            note = note + ' ' + line.strip()
+        return note
 
-  def clean_note( self, initial_note ):
-    """ Removes spaces from note, or sets default note.
-        Called by parse_note() """
-    cleaned_note = initial_note.replace( '  ', ' ' )
-    cleaned_note = cleaned_note.replace( '"', u"'" )
-    if len( cleaned_note.strip() ) == 0:
-      cleaned_note = 'no_note'
-    return cleaned_note
+    def clean_note( self, initial_note ):
+        """ Removes spaces from note, or sets default note.
+            Called by parse_note() """
+        cleaned_note = initial_note.replace( '  ', ' ' )
+        cleaned_note = cleaned_note.replace( '"', u"'" )
+        if len( cleaned_note.strip() ) == 0:
+          cleaned_note = 'no_note'
+        return cleaned_note
 
-  def parse_bookbarcode( self, single_page_slip ):
-    """ Parses book-barcode from lines of a single pageslip.
-        Called by controller.py """
-    book_barcode = 'init'
-    for line in single_page_slip:
-      stripped_line = line.strip()
-      if 'BARCODE:' in stripped_line:
-        temp_string = stripped_line[8:]   # gets everything after 'BARCODE:'
-        temp_string = temp_string.strip()   # removes outside whitespace, leaving barcode possibly containing space-characters
-        return_val = temp_string.replace( ' ', '' )
-        break
-    return return_val
+    def parse_bookbarcode( self, single_page_slip ):
+        """ Parses book-barcode from lines of a single pageslip.
+            Called by controller.py """
+        book_barcode = 'init'
+        for line in single_page_slip:
+          stripped_line = line.strip()
+          if 'BARCODE:' in stripped_line:
+            temp_string = stripped_line[8:]   # gets everything after 'BARCODE:'
+            temp_string = temp_string.strip()   # removes outside whitespace, leaving barcode possibly containing space-characters
+            return_val = temp_string.replace( ' ', '' )
+            break
+        return return_val
 
-  # end class Parser()
+    def parse_josiah_location_code( self, single_page_slip ):
+        '''
+        - Purpose: to extract an las 'customer-code' from a page-slip's josiah 'location-code'.
+        - Called by: opac_to_las_python_parser_code.controller
+        '''
+        return_val = '?'
+        for line in single_page_slip:
+            stripped_line = line.strip()
+            if 'LOCATION:' in stripped_line:
+                temp_string = stripped_line[9:]   # gets everything after 'LOCATION:'
+                temp_string = temp_string.strip()   # removes outside whitespace, leaving Josiah location
+                if not temp_string == '':
+                    return_val = convertJosiahLocationCode( temp_string )
+                break
+        return return_val
 
+    # end class Parser
+
+
+## non-class functions ##
 
 
 def checkDirectoryExistence( directory_path ):
@@ -244,25 +262,25 @@ def determineCount( number_of_parsed_items, pageslip_lines ):
 
 
 
-def parseJosiahLocationCode( single_page_slip ):
-  '''
-  - Purpose: to extract an las 'customer-code' from a page-slip's josiah 'location-code'.
-  - Called by: opac_to_las_python_parser_code.controller
-  '''
+# def parseJosiahLocationCode( single_page_slip ):
+#   '''
+#   - Purpose: to extract an las 'customer-code' from a page-slip's josiah 'location-code'.
+#   - Called by: opac_to_las_python_parser_code.controller
+#   '''
 
-  return_val = '?'
-  for line in single_page_slip:
-    stripped_line = line.strip()
-    if 'LOCATION:' in stripped_line:
-      temp_string = stripped_line[9:]   # gets everything after 'LOCATION:'
-      temp_string = temp_string.strip()   # removes outside whitespace, leaving Josiah location
-      if not temp_string == '':
-        return_val = convertJosiahLocationCode( temp_string )
-      break
+#   return_val = '?'
+#   for line in single_page_slip:
+#     stripped_line = line.strip()
+#     if 'LOCATION:' in stripped_line:
+#       temp_string = stripped_line[9:]   # gets everything after 'LOCATION:'
+#       temp_string = temp_string.strip()   # removes outside whitespace, leaving Josiah location
+#       if not temp_string == '':
+#         return_val = convertJosiahLocationCode( temp_string )
+#       break
 
-  return return_val
+#   return return_val
 
-  # end def parseJosiahLocationCode()
+#   # end def parseJosiahLocationCode()
 
 
 

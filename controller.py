@@ -131,10 +131,10 @@ for item in item_list:
   try:
     parser = utility_code.Parser()
     record_number = utility_code.parseRecordNumber(item)
-    # book_barcode = utility_code.parseBookBarcode(item)
     book_barcode = parser.parse_bookbarcode( item )
     las_delivery_stop = utility_code.parseJosiahPickupAtCode(item)
-    las_customer_code = utility_code.parseJosiahLocationCode(item)
+    # las_customer_code = utility_code.parseJosiahLocationCode(item)
+    las_customer_code = parser.parse_josiah_location_code( item )
     patron_name = utility_code.parsePatronName(item)
     patron_barcode = utility_code.parsePatronBarcode(item)
     title = utility_code.parseTitle(item)
@@ -145,7 +145,7 @@ for item in item_list:
     pageslip_count = pageslip_count + 1
     if pageslip_count % 10 == 0:
       utility_code.updateLog( message='- %s pageslips processed so far...' % pageslip_count )
-      print '.'
+      # print '.'
   except Exception, e:
     utility_code.updateLog( message='- iterating through item_list; problem with item "%s"; exception is: %s' % (item, e), message_importance='high' )
 utility_code.updateLog( message='- %s items parsed' % pageslip_count )
