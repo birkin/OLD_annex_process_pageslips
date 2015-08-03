@@ -369,29 +369,6 @@ class MiscellaneousFunctionTester(unittest.TestCase):
 
     # end def test_parseRecordNumber()
 
-  # def test_parseTitle(self):
-  #   '''input pageslip lines; output item title'''
-
-  #   # with 'TITLE' prefix
-  #   single_pageslip = ['   Brown University', '   Gateway Services, Rockefeller Library', '   10 Prospect Street - Box A', '   Providence, RI 02912', '', '   05-27-05', '', '', '', '', '          barcode abc', '          name', '          BROWN UNIVERSITY', '          U LIBR-WEB SERV - BOX A', '          PROVIDENCE, RI 02912-9101', '', '', '   Please page this material and', '   forward to the circulation unit.', '', '', '   AUTHOR:  Darlington, Marwood,', '   TITLE:   Draft resistance and social change', '   IMPRINT: Philadelphia, Olivier-Maney-Klein', '   PUB DATE: [1950]', '   DESC:    130 p. illus., ports. 21 cm', '   CALL NO: ML422.G48 D3', '   VOLUME:  ', '   BARCODE: 3 1236 07030 3881', '   STATUS: AVAILABLE', '   REC NO:  .i10295297', '   LOCATION: ANNEX', '   PICKUP AT: ROCK', '   OPACMSG: ', '', '', '', '', '   38']
-  #   expected = 'Draft resistance and social change'
-  #   result = utility_code.parseTitle( single_pageslip )
-  #   self.assertEqual( expected, result, '\n- expected is: %s\n  - result is: %s' % (expected, result) )
-
-  #   # without 'TITLE' prefix (happens when title is long) or even AUTHOR or IMPRINT as sometimes happens
-  #   single_pageslip = ['   Brown University', '   Gateway Services, Rockefeller Library', '   10 Prospect Street - Box A', '   Providence, RI 02912', '', '   05-27-05', '', '', '', '', '          barcode abc', '          name', '          BROWN UNIVERSITY', '          U LIBR-WEB SERV - BOX A', '          PROVIDENCE, RI 02912-9101', '', '', '   Please page this material and', '   forward to the circulation unit.', '', '', '   no_a-u-t-h-or:  Darlington, Marwood,', '   Irish Orpheus, the life of Patrick S. Gilmore, ba', '   no_i-m-p-r-i-n-t: Philadelphia, Olivier-Maney-Klein', '   PUB DATE: [1950]', '   DESC:    130 p. illus., ports. 21 cm', '   CALL NO: ML422.G48 D3', '   VOLUME:  ', '   BARCODE: 3 1236 07030 3881', '   STATUS: AVAILABLE', '   REC NO:  .i10295297', '   LOCATION: ANNEX', '   PICKUP AT: ROCK', '   OPACMSG: ', '', '', '', '', '   38']
-  #   expected = 'Irish Orpheus, the life of Patrick S. Gilmore, ba'
-  #   result = utility_code.parseTitle( single_pageslip )
-  #   self.assertEqual( expected, result, '\n- expected is: %s\n  - result is: %s' % (expected, result) )
-
-  #   # title contains quotes
-  #   single_pageslip = ['   Brown University', '   Gateway Services, Rockefeller Library', '   10 Prospect Street - Box A', '   Providence, RI 02912', '', '   05-27-05', '', '', '', '', '          barcode abc', '          name', '          BROWN UNIVERSITY', '          U LIBR-WEB SERV - BOX A', '          PROVIDENCE, RI 02912-9101', '', '', '   Please page this material and', '   forward to the circulation unit.', '', '', '   AUTHOR:  Darlington, Marwood,', '   TITLE:   Draft resistance "and" social change', '   IMPRINT: Philadelphia, Olivier-Maney-Klein', '   PUB DATE: [1950]', '   DESC:    130 p. illus., ports. 21 cm', '   CALL NO: ML422.G48 D3', '   VOLUME:  ', '   BARCODE: 3 1236 07030 3881', '   STATUS: AVAILABLE', '   REC NO:  .i10295297', '   LOCATION: ANNEX', '   PICKUP AT: ROCK', '   OPACMSG: ', '', '', '', '', '   38']
-  #   expected = "Draft resistance 'and' social change"
-  #   result = utility_code.parseTitle( single_pageslip )
-  #   self.assertEqual( expected, result, '\n- expected is: %s\n  - result is: %s' % (expected, result) )
-
-  #   # end def test_parseTitle()
-
   def test_prepareDateTimeStamp(self):
     '''sending a known time to check formatting'''
 

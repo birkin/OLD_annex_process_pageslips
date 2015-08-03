@@ -250,19 +250,6 @@ except Exception, e:
   utility_code.updateLog( message=message, message_importance='high' )
   sys.exit( message )
 
-# try:
-#   count_file_name = 'REQ-PARSED_%s.cnt' % date_stamp
-#   count_file_las_destination_path = '%s/%s' % ( PATH_TO_PARSED_ANNEX_COUNT_DIRECTORY, count_file_name )
-#   f = open( count_file_las_destination_path, 'w' )
-#   f.write( str(len(new_item_list)) + '\n' )
-#   f.close()
-#   os.chmod( parsed_file_archive_path, 0666 )   # rw-/rw-/rw-
-#   utility_code.updateLog( message='- count file written to: %s' % count_file_las_destination_path )
-# except Exception, e:
-#   message='- problem on save of count file; quitting; exception is: %s' % e
-#   utility_code.updateLog( message=message, message_importance='high' )
-#   sys.exit( message )
-
 
 
 ## copy parsed file to annex file-receiving folder

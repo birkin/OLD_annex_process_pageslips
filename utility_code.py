@@ -282,28 +282,6 @@ def determineCount( number_of_parsed_items, pageslip_lines ):
 
 
 
-# def parseJosiahLocationCode( single_page_slip ):
-#   '''
-#   - Purpose: to extract an las 'customer-code' from a page-slip's josiah 'location-code'.
-#   - Called by: opac_to_las_python_parser_code.controller
-#   '''
-
-#   return_val = '?'
-#   for line in single_page_slip:
-#     stripped_line = line.strip()
-#     if 'LOCATION:' in stripped_line:
-#       temp_string = stripped_line[9:]   # gets everything after 'LOCATION:'
-#       temp_string = temp_string.strip()   # removes outside whitespace, leaving Josiah location
-#       if not temp_string == '':
-#         return_val = convertJosiahLocationCode( temp_string )
-#       break
-
-#   return return_val
-
-#   # end def parseJosiahLocationCode()
-
-
-
 def parseJosiahPickupAtCode( single_page_slip ):
   '''
   - Purpose: to extract an las 'delivery-stop-code' from a page-slip's josiah 'pickup-at-code'.
@@ -402,33 +380,6 @@ def parseRecordNumber( single_page_slip ):
   return record_number
 
   # end def parseRecordNumber()
-
-
-
-# def parseTitle( pageslip_lines ):
-#   '''
-#   - Purpose: to extract the item title from the lines of a pageslip.
-#   - Called by: opac_to_las_python_parser_code.controller
-#   '''
-
-#   counter = 0
-#   title_line = ''
-
-#   for line in pageslip_lines:
-#     if 'TITLE:' in line:
-#       title_line = line.replace( 'TITLE:', '' )
-#       break
-#     elif 'PUB DATE:' in line:   # means that the title was too long to have a label
-#       title_line = pageslip_lines[ counter - 2 ]   # two lines above 'PUB DATE:'
-#       break
-#     counter = counter + 1
-
-#   stripped_title = title_line.strip()
-#   dequoted_title = stripped_title.replace( '"', "'" )
-
-#   return dequoted_title
-
-#   # end def parseTitle()
 
 
 
