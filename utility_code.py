@@ -467,7 +467,6 @@ def postFileData( identifier, file_data, update_type ):
 
 
 
-
 def prepareDateTimeStamp( date_stamp ):
   '''
   - Called by: opac_to_las_python_parser_code.controller
@@ -504,6 +503,7 @@ def updateLog( message, message_importance='low', identifier='' ):
   - Purpose: update web-accessible log.
   '''
 
+  logger.debug( 'web-message, `%s`' % message )
   LOG_ENTRY_MINIMUM_IMPORTANCE_LEVEL = os.environ['AN_PR_PA__LOG_ENTRY_MINIMUM_IMPORTANCE_LEVEL']
   LOG_KEY = os.environ['AN_PR_PA__LOG_KEY']
   LOG_URL = os.environ['AN_PR_PA__LOG_URL']
@@ -526,10 +526,10 @@ def updateLog( message, message_importance='low', identifier='' ):
       returned_data = response.read()
       return returned_data
     except Exception, e:
-      pass   # TO_DO: output exception to a log-file
-      # raise Exception( '- in utility_code(); exception is: %s' % e )
+      logger.error( 'exception, `%s`' % unicode(repr(e)) )
 
   # end def updateLog()
+
 
 
 class Mailer( object ):

@@ -5,7 +5,7 @@ from __future__ import unicode_literals
 
 ## set up environment ##
 
-import datetime, os, shutil, smtplib, string, sys
+import datetime, logging, os, shutil, smtplib, string, sys
 from email.Header import Header
 from email.mime.text import MIMEText
 sys.path.append( os.environ['AN_PR_PA__ENCLOSING_PROJECT_PATH'] )
@@ -18,6 +18,20 @@ PATH_TO_PARSED_ANNEX_COUNT_DIRECTORY = os.environ['AN_PR_PA__PATH_TO_PARSED_ANNE
 PATH_TO_PARSED_ANNEX_DATA_DIRECTORY = os.environ['AN_PR_PA__PATH_TO_PARSED_ANNEX_DATA_DIRECTORY']
 PATH_TO_SOURCE_FILE = os.environ['AN_PR_PA__PATH_TO_SOURCE_FILE']
 PATH_TO_SOURCE_FILE_DIRECTORY = os.environ['AN_PR_PA__PATH_TO_SOURCE_FILE_DIRECTORY']
+LOG_PATH = os.environ['AN_PR_PA__LOG_PATH']
+LOG_LEVEL = os.environ['AN_PR_PA__LOG_LEVEL']  # 'DEBUG' or 'INFO'
+
+
+
+## logging
+log_level = { 'DEBUG': logging.DEBUG, 'INFO': logging.INFO }
+logging.basicConfig(
+    filename=LOG_PATH, level=log_level[LOG_LEVEL],
+    format='[%(asctime)s] %(levelname)s [%(module)s-%(funcName)s()::%(lineno)d] %(message)s',
+    datefmt='%d/%b/%Y %H:%M:%S'
+    )
+logger = logging.getLogger(__name__)
+logger.debug( 'START' )
 
 
 
