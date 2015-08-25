@@ -129,6 +129,13 @@ class ItemListMakerTest( unittest.TestCase ):
         processed_data = self.item_list_maker.make_item_list( text )
         self.assertEqual( 1, len(processed_data) )  # 1 page-slip
 
+    def test_BrownU_in_address( self):
+        with open( '%s/%s' % (TEST_FILES_DIR_PATH, 'testFile15_BrownU_in_address.txt') ) as f:
+            text = f.read()
+        processed_data = self.item_list_maker.make_item_list( text )
+        # pprint.pprint( processed_data )
+        self.assertEqual( 3, len(processed_data) )
+
     # end class ItemListMakerTest()
 
 

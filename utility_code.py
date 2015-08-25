@@ -15,6 +15,7 @@ class ItemListMaker( object ):
     self.items = []
     self.item = []
     self.last_line = ''
+    self.two_lines_past = ''
 
   def make_item_list( self, text ):
     """ Turns utf8-text into list of requests, where each request is a list of lines. """
@@ -24,10 +25,10 @@ class ItemListMaker( object ):
         self.items.append( self.item )  # copies current item to items
         self.item = []  # clear item
       self.conditionally_append_line_to_item( line )
+      self.two_lines_past = self.last_line
       self.last_line = line
     self.items.append( self.item )  # adds last item
     self.clean_items()
-    # logger.debug( 'items, `%s`' % pprint.pformat( self.items) )
     return self.items
 
   def make_lines( self, text ):
@@ -41,16 +42,16 @@ class ItemListMaker( object ):
   def check_start( self, line ):
     """ Determines if line is beginning of an item.
         Called by make_item_list() """
-    # logger.debug( 'line, `%s`' % line )
     line = line.strip()
     return_val = False
-    if (line in ['Brown University', 'Brown University Library' ]) and ('AUTHOR' not in line) and ('AUTHOR' not in self.last_line):
-      return_val = True
+    if line in ['Brown University', 'Brown University Library' ]:
+        if ('AUTHOR' not in line) and ('AUTHOR' not in self.last_line):
+            if ('21236' not in self.two_lines_past and '2 1236' not in self.two_lines_past):
+                return_val = True
     elif line.strip()[0:3] in [ 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun' ] and len(self.item) < 1:
-      return_val = True
+        return_val = True
     elif len(self.item) > 1 and self.item[-1].strip()[0:4] in [ '38:1', '38:2', '38:3', '38:4', '38:5', '38:6', '38:7', '38:8', '38:9', '38:0' ]:
-      return_val = True
-    # logger.debug( 'return_val, `%s`' % return_val )
+        return_val = True
     return return_val
 
   def conditionally_append_line_to_item( self, line ):
