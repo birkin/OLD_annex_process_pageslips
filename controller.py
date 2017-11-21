@@ -107,10 +107,12 @@ try:
   utility_code.updateLog( message='- original_file post_result is: %s' % post_result )
 except Exception, e:
   utility_code.updateLog( message='- original_file post_result exception is: %s' % e )
-  sys.exit( 'error on original-file post; exception is: %s' % e )
+  # sys.exit( 'error on original-file post; exception is: %s' % e )
 if not post_result == 'success':
-  utility_code.updateLog( message='- post_result not "success"; quitting' )
-  sys.exit( 'error on original-file post; post_result not "success"; exception is: %s' % e )
+  # utility_code.updateLog( message='- post_result not "success"; quitting' )
+  # sys.exit( 'error on original-file post; post_result not "success"; exception is: %s' % e )
+  utility_code.updateLog( message='- post_result not "success"; but continuing' )
+  # sys.exit( 'error on original-file post; post_result not "success"; exception is: %s' % e )
 
 
 
@@ -194,10 +196,12 @@ try:
   utility_code.updateLog( message='- parsed_file post_result is: %s' % post_result )
 except Exception, e:
   utility_code.updateLog( message='- parsed_file post_result exception is: %s' % e, message_importance='high' )
-  sys.exit( 'error on parsed-file post' )
+  # sys.exit( 'error on parsed-file post' )
 if not post_result == 'success':
-  utility_code.updateLog( message='- post_result of parsed file not "success"; quitting', message_importance='high' )
-  sys.exit( 'error on parsed-file post' )
+  # utility_code.updateLog( message='- post_result of parsed file not "success"; quitting', message_importance='high' )
+  # sys.exit( 'error on parsed-file post' )
+  utility_code.updateLog( message='- post_result of parsed file not "success"; but continuing', message_importance='high' )
+  # sys.exit( 'error on parsed-file post' )
 
 
 
