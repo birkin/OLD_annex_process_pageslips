@@ -240,7 +240,7 @@ def convertJosiahLocationCode( code ):
   - Called by: utility_code.parseJosiahLocationCode()
   '''
   JOSIAH_LOCATION_TO_LAS_CUSTOMER_CODE_CONVERTER_API_URL_PREFIX = os.environ['AN_PR_PA__JOSIAH_LOCATION_TO_LAS_CUSTOMER_CODE_CONVERTER_API_URL_PREFIX']
-  full_url = '%s%s' % ( JOSIAH_LOCATION_TO_LAS_CUSTOMER_CODE_CONVERTER_API_URL_PREFIX, urllib.quote(code) )
+  full_url = '%s%s/' % ( JOSIAH_LOCATION_TO_LAS_CUSTOMER_CODE_CONVERTER_API_URL_PREFIX, urllib.quote(code) )
   logger.debug( 'full_url, ```%s```' % full_url )
   try:
     string_data = urllib.urlopen( full_url ).read()
@@ -265,7 +265,7 @@ def convertJosiahPickupAtCode( code ):
   - Called by: utility_code.parseJosiahPickupAtCode()
   '''
   JOSIAH_PICKUP_AT_TO_LAS_DELIVERY_STOP_CONVERTER_API_URL_PREFIX = os.environ['AN_PR_PA__JOSIAH_PICKUP_AT_TO_LAS_DELIVERY_STOP_CONVERTER_API_URL_PREFIX']
-  full_url = '%s%s' % ( JOSIAH_PICKUP_AT_TO_LAS_DELIVERY_STOP_CONVERTER_API_URL_PREFIX, urllib.quote(code) )
+  full_url = '%s%s/' % ( JOSIAH_PICKUP_AT_TO_LAS_DELIVERY_STOP_CONVERTER_API_URL_PREFIX, urllib.quote(code) )
   logger.debug( 'full_url, ```%s```' % full_url )
   try:
     string_data = urllib.urlopen( full_url ).read()
