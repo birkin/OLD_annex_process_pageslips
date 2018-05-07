@@ -105,18 +105,18 @@ class Parser( object ):
       TODO: - refactor rest of parsing functions into here.
             - refactor code to call this new parse_all() function from the controller (now for testing only) """
 
-    def parse_all( self, pageslip_lines ):
+    def parse_all( self, single_pageslip_string ):
         """ Calls individual parser functions.
             Called by: we'll see. """
-        record_number = parseRecordNumber(item)
-        book_barcode = self.parse_bookbarcode( item )
-        las_delivery_stop = parseJosiahPickupAtCode(item)
-        las_customer_code = self.parse_josiah_location_code( item )
-        patron_name = parsePatronName(item)
-        patron_barcode = parsePatronBarcode(item)
-        title = self.parse_title( item )
+        record_number = parseRecordNumber( single_pageslip_string )
+        book_barcode = self.parse_bookbarcode( single_pageslip_string )
+        las_delivery_stop = parseJosiahPickupAtCode(single_pageslip_string)
+        las_customer_code = self.parse_josiah_location_code( single_pageslip_string )
+        patron_name = parsePatronName( single_pageslip_string )
+        patron_barcode = parsePatronBarcode( single_pageslip_string )
+        title = self.parse_title( single_pageslip_string )
         las_date = prepareLasDate()
-        note = self.parse_note( item )
+        note = self.parse_note( single_pageslip_string )
         full_line = '''"%s","%s","%s","%s","%s","%s","%s","%s","%s"''' % (
             record_number, book_barcode, las_delivery_stop, las_customer_code, patron_name, patron_barcode, title, las_date, note )
         logger.debug( 'full_line, ```%s```' % full_line )
@@ -217,7 +217,8 @@ def processor_wrapper( filepath ):
     parser = Parser()
     for pageslip in pageslips:
         parsed_pageslip = parser.parse_all( pageslip )
-        output_list.apped( parsed_pageslip )
+        output_list.append( parsed_pageslip )
+    logger.debug( 'output_list, ```%s```' % pprint.pformat(output_list) )
     return output_list
 
 
