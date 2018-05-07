@@ -179,6 +179,22 @@ class Parser( object ):
 ## non-class functions ##
 
 
+def processor_wrapper( filepath ):
+    """ Calls item-list-prepper, then parser-loop.
+        Called by: we'll see. """
+    output_list = []
+    list_maker = ItemListMaker()
+    with open( filepath ) as f:
+        utf8_text = f.read()
+        text = utf8_text.decode( 'utf-8' )
+    pageslips = list_maker.make_item_list( text )
+    parser = Parser()
+    for pageslip in pageslips:
+        parsed_pageslip = parser.parse_all( pageslip )
+        output_list.apped( parsed_pageslip )
+    return output_list
+
+
 def checkDirectoryExistence( directory_path ):
   '''
   - Called by: opac_to_las_python_parser_code.controller

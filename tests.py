@@ -139,32 +139,27 @@ class ItemListMakerTest( unittest.TestCase ):
     ## end class ItemListMakerTest()
 
 
-# class InputOutputTest( unittest.TestCase ):
-#     """ Loops through source and lists output expectation. """
+class InputOutputTest( unittest.TestCase ):
+    """ Loops through source and lists output expectation. """
 
-#     def setUp(self):
-#         self.item_list_maker = utility_code.ItemListMaker()
-#         self.test_lst = [
-#             {'source': 'testFile01_singleEntry.txt',
-#                 'explanation': 'single entry',
-#                 'expected': 'foo'},
-#             {'source': 'testFile12_missing_brown_address.txt',
-#                 'explanation': 'missing Brown address',
-#                 'expected': 'foo2'},
-#         ]
+    def setUp(self):
+        self.test_lst = [
+            {'source': 'testFile01_singleEntry.txt',
+                'explanation': 'single entry',
+                'expected': ['foo'] },
+            {'source': 'testFile12_missing_brown_address.txt',
+                'explanation': 'missing Brown address',
+                'expected': ['foo2'] },
+        ]
 
-#     def test_item_list_maker(self):
-#         """ Checks processed-output of multiple files. """
-#         for source_dct in self.test_lst:
-#             logger.debug( 'testing source_file, ```%s```' % source_dct['source'] )
-#             with open( '%s/%s' % (TEST_FILES_DIR_PATH, source_dct['source']) ) as f:
-#                 utf8_text = f.read()
-#                 text = utf8_text.decode( 'utf-8' )
-#                 logger.debug( 'text, ```%s```' % text )
-#             self.assertEqual( unicode, type(text) )
-#             self.assertEqual( 'blah', source_dct['expected'] )
+    def test_processor(self):
+        """ Checks processed-output of multiple files. """
+        for source_dct in self.test_lst:
+            filepath = '%s/%s' % ( TEST_FILES_DIR_PATH, source_dct['source'] )
+            logger.debug( 'testing source_file, ```%s```' % filepath )
+            self.assertEqual( source_dct['expected'], utility_code.processor_wrapper( filepath ) )
 
-#     ## end class InputOutputTest()
+    ## end class InputOutputTest()
 
 
 class ParserTest( unittest.TestCase ):
