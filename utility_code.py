@@ -34,10 +34,18 @@ class ItemListMaker( object ):
   def make_lines( self, text ):
     """ Turns text into lines.
         Called by make_item_list() """
-    assert type(text) == str
-    unicode_text = text.decode( 'utf-8' )
-    lines = unicode_text.split( '\n' )
+    if type( text ) == str:
+        text = text.decode( 'utf-8' )
+    lines = text.split( '\n' )
     return lines
+
+  # def make_lines( self, text ):
+  #   """ Turns text into lines.
+  #       Called by make_item_list() """
+  #   assert type(text) == str
+  #   unicode_text = text.decode( 'utf-8' )
+  #   lines = unicode_text.split( '\n' )
+  #   return lines
 
   def check_start( self, line ):
     """ Determines if line is beginning of an item.
@@ -94,7 +102,25 @@ class ItemListMaker( object ):
 
 class Parser( object ):
     """ Parses data-fields from a single pageslip's lines.
-      TODO: refactor rest of parsing functions into here. """
+      TODO: - refactor rest of parsing functions into here.
+            - refactor code to call this new parse_all() function from the controller (now for testing only) """
+
+    def parse_all( self, pageslip_lines ):
+        """ Calls individual parser functions.
+            Called by: we'll see. """
+        record_number = parseRecordNumber(item)
+        book_barcode = self.parse_bookbarcode( item )
+        las_delivery_stop = parseJosiahPickupAtCode(item)
+        las_customer_code = self.parse_josiah_location_code( item )
+        patron_name = parsePatronName(item)
+        patron_barcode = parsePatronBarcode(item)
+        title = self.parse_title( item )
+        las_date = prepareLasDate()
+        note = self.parse_note( item )
+        full_line = '''"%s","%s","%s","%s","%s","%s","%s","%s","%s"''' % (
+            record_number, book_barcode, las_delivery_stop, las_customer_code, patron_name, patron_barcode, title, las_date, note )
+        logger.debug( 'full_line, ```%s```' % full_line )
+        return full_line
 
     def parse_note( self, pageslip_lines ):
         """ Extracts possible note from lines of a single pageslip.
